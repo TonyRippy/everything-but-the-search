@@ -25,16 +25,56 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           font-family: 'Monoton Regular';
           src: url(fonts/Monoton-Regular.ttf) format('truetype');
       }
+      :root {
+        background-color: #0f1419;
+        color: #c5c5c5;
+      }
       #logo {
         font-family: 'Monoton Regular', sans-serif;
+        font-size: 3em;
+        width: 100%;
+        text-align: center;
+        margin-top: 2em;
+      }
+      #logo :nth-child(1) {
+        color: #CC0000;
+      }
+      #logo :nth-child(2) {
+        color: #CCCC00;
+      }
+      #logo :nth-child(3) {
+        color: #0000CC;
+      }
+      #logo :nth-child(4) {
+        color: #00CC00;
+      }
+      form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      input {
+        width: 40%;
+        border: 1px solid #999;
+        border-radius: 15px;
+        margin-top: 1em;
+        padding: 0.25em 1em 0.25em 1em;
+        background-color: #14191f;
+        color: white;
+        font-size: large;
       }
     </style>
   </head>
   <body>
     <div id="logo">
-      Everything But The Search
+      <span>Everything</span>
+      <span>But</span>
+      <span>The</span>
+      <span>Search</span>
     </div>
-    Not implemented yet!
+    <form action="/search" method="get">
+      <input type="input" name="q" placeholder="Search" autofocus>
+    </form>
   </body>
   <!-- <script type="text/javascript" src="/js"></script> -->
 </html>
