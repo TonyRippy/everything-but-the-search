@@ -1,8 +1,12 @@
 const Path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: Path.resolve(__dirname, './src/index.ts'),
+  entry: {
+    'js/index': './src/index.ts',
+    'css/index': './src/index.scss',
+  },
   devtool: 'inline-source-map',
   mode: 'production',
   output: {
@@ -17,6 +21,9 @@ module.exports = {
         // { from: Path.resolve(__dirname, './src/img'), to: 'img' },
       ],
     }),
+    new MiniCssExtractPlugin({
+      filename: '[name].min.css',
+    }),
   ],
   module: {
     rules: [
@@ -24,6 +31,10 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.s?css/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
       },
     ],
   },
