@@ -17,8 +17,10 @@
 #[macro_use]
 extern crate log;
 
+use bytes::Bytes;
 use clap::Parser;
 use env_logger::Env;
+use http_body_util::Full;
 use hyper::Uri;
 use hyper::{server::conn::http1, service::service_fn, Request, Response, StatusCode};
 use hyper_util::rt::TokioIo;
@@ -29,7 +31,8 @@ use tokio::{net::TcpListener, runtime, task};
 
 const NEW_TAB_HTML: &str = include_str!("../ui/dist/index.html");
 const SEARCH_RESULT_HTML: &str = include_str!("../ui/dist/result.html");
-const INDEX_JS: &str = include_str!("../ui/dist/main.min.js");
+const INDEX_JS: &str = include_str!("../ui/dist/js/index.min.js");
+const LOGO_FONT: &[u8] = include_bytes!("../ui/src/fonts/Monoton-Regular.ttf");
 
 #[derive(Parser)]
 struct Args {
@@ -64,20 +67,20 @@ impl Query {
     }
 }
 
-fn new_tab<R>(_: Request<R>) -> Result<Response<String>, hyper::http::Error> {
+fn new_tab<R>(_: Request<R>) -> Result<Response<Full<Bytes>>, hyper::http::Error> {
     Response::builder()
         .header("Content-Type", "text/html; charset=utf-8")
         .status(StatusCode::OK)
         .body(NEW_TAB_HTML.into())
 }
 
-fn search<R>(req: Request<R>) -> Result<Response<String>, hyper::http::Error> {
+fn search<R>(req: Request<R>) -> Result<Response<Full<Bytes>>, hyper::http::Error> {
     let query = match Query::parse(req.uri()) {
         Some(query) => query,
         None => {
             return Response::builder()
                 .status(StatusCode::BAD_REQUEST)
-                .body(String::default());
+                .body(Full::default());
         }
     };
     info!("searching for: {:?}", query.query);
@@ -87,17 +90,21 @@ fn search<R>(req: Request<R>) -> Result<Response<String>, hyper::http::Error> {
         .body(SEARCH_RESULT_HTML.into())
 }
 
-async fn serve<R>(req: Request<R>) -> Result<Response<String>, hyper::http::Error> {
+async fn serve<R>(req: Request<R>) -> Result<Response<Full<Bytes>>, hyper::http::Error> {
     match req.uri().path() {
         "/" => new_tab(req),
         "/search" => search(req),
+        "/fonts/Monoton-Regular.ttf" => Response::builder()
+            .header("Content-Type", "font/ttf")
+            .status(StatusCode::OK)
+            .body(LOGO_FONT.into()),
         "/js" => Response::builder()
             .header("Content-Type", "text/javascript; charset=utf-8")
             .status(StatusCode::OK)
             .body(INDEX_JS.into()),
         _ => Response::builder()
             .status(StatusCode::NOT_FOUND)
-            .body(String::default()),
+            .body(Full::default()),
     }
 }
 
@@ -125,7 +132,7 @@ async fn serving_loop(args: &Args) -> Result<(), Error> {
 fn main() -> ExitCode {
     // Parse command-line arguments
     let args = Args::parse();
-    
+
     // Initialize logging
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
