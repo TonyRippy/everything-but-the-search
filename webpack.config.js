@@ -8,7 +8,7 @@ module.exports = {
     'css/index': './src/index.scss',
   },
   devtool: 'inline-source-map',
-  mode: 'development',
+  mode: 'production',
   output: {
     path: Path.resolve(__dirname, 'dist'),
     filename: '[name].min.js',
@@ -17,7 +17,6 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: Path.resolve(__dirname, './src/index.html') },
-        { from: Path.resolve(__dirname, './src/fonts'), to: 'fonts' },
         // { from: Path.resolve(__dirname, './src/img'), to: 'img' },
       ],
     }),
