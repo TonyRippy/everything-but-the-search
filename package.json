@@ -2,9 +2,9 @@
   "name": "everything-but-the-search",
   "version": "0.1.0",
   "author": "Tony Rippy <tonyrippy@gmail.com>",
-  "description": "A basic UI that can be embedded into mumble clients.",
+  "description": "A local-first replacment for convenience queries on web search engines.",
   "private": true,
-  "license": "Apache-2.0",
+  "license": "GPL-3.0",
   "scripts": {
     "generate": "tspeg src/grammar.peg src/parser.ts",
     "build": "webpack",
