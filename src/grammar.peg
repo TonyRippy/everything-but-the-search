@@ -1,3 +1,4 @@
+---
 // Queries supported by Everything But The Search
 // Copyright (C) 2023, Tony Rippy
 //
@@ -14,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
----
 import Fraction from 'fraction.js';
 ---
 
@@ -24,7 +24,7 @@ import Fraction from 'fraction.js';
 
 QUERY := HELLO | CONVERSION
 
-HELLO := 'hello,? 'i name='.*'
+HELLO := 'hello,? 'i name='[^.!?]*' '[.!?]'?
 
 CONVERSION := 'what (?:is|are)\s+'i? quantity=NUMBER '\s*' from_unit=UNIT '\s*' {'in\s*to' | 'in' | 'to' | 'as'} '\s+' to_unit=UNIT '\s*\?'?
 
