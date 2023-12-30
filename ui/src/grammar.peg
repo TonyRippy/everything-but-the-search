@@ -1,0 +1,59 @@
+// Queries supported by Everything But The Search
+// Copyright (C) 2023, Tony Rippy
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+---
+import Fraction from 'fraction.js';
+---
+
+  /////////////
+ // QUERIES //
+/////////////
+
+QUERY := HELLO | CONVERSION
+
+HELLO := 'hello,? 'i name='.*'
+
+CONVERSION := 'what (?:is|are)\s+'i? quantity=NUMBER '\s*' from_unit=UNIT '\s*' {'in\s*to' | 'in' | 'to' | 'as'} '\s+' to_unit=UNIT '\s*\?'?
+
+
+  ////////////////////
+ // NUMERIC VALUES //
+////////////////////
+
+integer := literal='[+-]?\d+'
+           .value = Fraction { return new Fraction(this.literal); }
+
+decimal := literal='\d*\.\d+'
+           .value = Fraction { return new Fraction(this.literal); }
+
+scientific := literal='[+-]?(?:\d*\.\d+|\d+)e[+-]?\d+'
+              .value = Fraction { return new Fraction(parseFloat(this.literal)); }
+
+NUMBER := scientific | decimal | integer
+          
+
+  //////////////////////////
+ // UNITS OF MEASUREMENT //
+//////////////////////////
+
+bit := 'bits?'i
+nibble := 'nibbles?'i
+byte := 'bytes?'i | 'B'i
+kilobyte := 'kilobytes?' | 'KB'i
+megabyte := 'megabytes?'i | 'MB'i
+gigabyte := 'gigabytes?'i | 'GB'i
+
+UNIT := bit | nibble | byte | kilobyte | megabyte | gigabyte

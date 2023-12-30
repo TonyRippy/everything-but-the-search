@@ -14,8 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-const queryString = window.location.search;
-console.log(queryString);
-const urlParams = new URLSearchParams(queryString);
-const search = urlParams.get('q');
-console.log(search);
+import { parse, ASTKinds } from './parser'
+import { convert } from './conversion'
+
+export function query(q: string | null) {
+  if (q === null) {
+    // Nothing to do
+    return
+  }
+  // Set the search box to the query
+  let input = document.getElementsByName('q')[0] as HTMLInputElement
+  input.setAttribute('value', q)
+  input.setSelectionRange(q.length, q.length)
+
+  // Parse the query and invoke the proper handler if a match is found.
+  let ast = parse(q)
+  if (ast.ast === null) {
+    // TODO: Give option to file GitHub issue.
+    ast.errs.forEach((e) => console.debug(e.toString()))
+    return
+  } else {
+    switch (ast.ast.kind) {
+      case ASTKinds.HELLO:
+        console.log('Hello')
+        break
+      case ASTKinds.CONVERSION:
+        convert(ast.ast)
+        break
+      default:
+        // TODO: This is an oopsie. Provide link to file GitHub issue.
+        console.error('Unknown AST kind.');
+        console.error(ast.ast);
+    }
+  }
+}
+
+query(new URLSearchParams(window.location.search).get('q'))

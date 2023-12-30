@@ -1,1 +1,65 @@
-// Nothin' yet.
+// Copyright (C) 2023, Tony Rippy
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+@font-face {
+  font-family: 'Monoton Regular';
+  src: url(fonts/Monoton-Regular.ttf) format('truetype');
+}
+
+:root {
+  background-color: #0f1419;
+  color: #c5c5c5;
+}
+
+#logo {
+  font-family: 'Monoton Regular', sans-serif;
+  font-size: 3em;
+  width: 100%;
+  text-align: center;
+  margin-top: 2em;
+}
+
+#logo :nth-child(1) {
+  color: #CC0000;
+}
+
+#logo :nth-child(2) {
+  color: #CCCC00;
+}
+
+#logo :nth-child(3) {
+  color: #0000CC;
+}
+
+#logo :nth-child(4) {
+  color: #00CC00;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+input {
+  width: 40%;
+  border: 1px solid #999;
+  border-radius: 15px;
+  margin-top: 1em;
+  padding: 0.25em 1em 0.25em 1em;
+  background-color: #14191f;
+  color: white;
+  font-size: large;
+}

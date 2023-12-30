@@ -6,6 +6,7 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
+    "generate": "tspeg src/grammar.peg src/parser.ts",
     "build": "webpack",
     "start": "webpack-dev-server --open",
     "lint": "eslint src/**/*.ts",
@@ -14,12 +15,12 @@
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.2",
-    "mini-css-extract-plugin": "^2.7.1",
     "eslint": "^8.36.0",
     "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-promise": "^6.1.1",
+    "mini-css-extract-plugin": "^2.7.1",
     "postcss-loader": "^7.0.2",
     "sass": "^1.56.1",
     "sass-loader": "^13.2.0",
@@ -30,5 +31,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "fraction.js": "^4.3.7",
+    "tspeg": "^3.3.1"
   }
 }
