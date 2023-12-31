@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { ASTKinds, CONVERSION } from "./parser"
-import Fraction from "fraction.js"
+import type { CONVERSION } from './parser'
+import type Fraction from 'fraction.js'
 
 // #[derive(Debug, PartialEq)]
 // enum BaseUnit {
@@ -34,7 +34,7 @@ import Fraction from "fraction.js"
 //       return whole.to_string();
 //   }
 //   if whole == 0 {
-//       return format!("{}/{}", n, d);  
+//       return format!("{}/{}", n, d);
 //   }
 
 //     //         format!("{} {}/{}", whole, remainder, d)
@@ -309,10 +309,10 @@ import Fraction from "fraction.js"
 //     }
 // }
 
-function convertParsed(quantity: Fraction, from: string, to: string) {
+function convertParsed (quantity: Fraction, from: string, to: string): void {
   console.log('Conversion')
 }
 
-export function convert(query: CONVERSION) {
-  return convertParsed(query.quantity.value, query.from_unit, query.to_unit)
+export function convert (query: CONVERSION): void {
+  convertParsed(query.quantity.value, query.from_unit, query.to_unit)
 }
