@@ -10,6 +10,14 @@ describe('Hello World parsing', () => {
     expect(ast.name).toBe('')
   })
 
+  test('should work with punctuation', () => {
+    let ret = parse('HELLO!')
+    expect(ret.ast).not.toBeNull()
+    let ast = ret.ast as HELLO
+    expect(ast.kind).toBe(ASTKinds.HELLO)
+    expect(ast.name).toBe('')
+  })
+
   test('should capture the name', () => {
     let ret = parse('Hello, World!')
     expect(ret.ast).not.toBeNull()
