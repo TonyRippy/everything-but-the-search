@@ -17,22 +17,21 @@
 import { parse, ASTKinds } from './parser'
 import { convert } from './conversion'
 
-export function query(q: string | null) {
+export function query (q: string | null): void {
   if (q === null) {
     // Nothing to do
     return
   }
   // Set the search box to the query
-  let input = document.getElementsByName('q')[0] as HTMLInputElement
+  const input = document.getElementsByName('q')[0] as HTMLInputElement
   input.setAttribute('value', q)
   input.setSelectionRange(q.length, q.length)
 
   // Parse the query and invoke the proper handler if a match is found.
-  let ast = parse(q)
+  const ast = parse(q)
   if (ast.ast === null) {
     // TODO: Give option to file GitHub issue.
-    ast.errs.forEach((e) => console.debug(e.toString()))
-    return
+    ast.errs.forEach((e) => { console.debug(e.toString()) })
   } else {
     switch (ast.ast.kind) {
       case ASTKinds.HELLO:
@@ -43,8 +42,8 @@ export function query(q: string | null) {
         break
       default:
         // TODO: This is an oopsie. Provide link to file GitHub issue.
-        console.error('Unknown AST kind.');
-        console.error(ast.ast);
+        console.error('Unknown AST kind.')
+        console.error(ast.ast)
     }
   }
 }
