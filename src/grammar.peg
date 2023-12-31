@@ -24,9 +24,14 @@ import Fraction from 'fraction.js';
 
 QUERY := HELLO | CONVERSION
 
-HELLO := 'hello,?'i '\s*' name='[^.!?]*' '[.!?]'?
+greeting_prefix := '^\s*hello'i 
+greeting_suffix := '(?:\s*[,.!?]*)*$'
+greeting := greeting_prefix suffix=greeting_suffix
+greeting_with_name := greeting_prefix {'\s*,\s*' | '\s+'} name='[^,.!?]+' greeting_suffix
+HELLO := greeting_with_name | greeting
 
-CONVERSION := 'what (?:is|are)\s+'i? quantity=NUMBER '\s*' from_unit=UNIT '\s*' {'in\s*to' | 'in' | 'to' | 'as'} '\s+' to_unit=UNIT '\s*\?'?
+convert_prefix := 'what\s+(?:is|are)\s+'i | 'convert\s+'i
+CONVERSION := '\s*' convert_prefix? quantity=NUMBER '\s*' from_unit=UNIT '\s*' {'in\s*to' | 'in' | 'to' | 'as'} '\s+' to_unit=UNIT '\s*\?'?
 
 
   ////////////////////

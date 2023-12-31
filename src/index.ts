@@ -16,9 +16,10 @@
 
 import { parse, ASTKinds } from './parser'
 import { convert } from './conversion'
+import { hello, hello_with_name } from './hello'
 
 export function query (q: string | null): void {
-  if (q === null) {
+  if (!q) {
     // Nothing to do
     return
   }
@@ -27,6 +28,10 @@ export function query (q: string | null): void {
   input.setAttribute('value', q)
   input.setSelectionRange(q.length, q.length)
 
+  // Show the results section
+  const results = document.getElementById('results') as HTMLInputElement
+  results.style.display = 'block'
+
   // Parse the query and invoke the proper handler if a match is found.
   const ast = parse(q)
   if (ast.ast === null) {
@@ -34,11 +39,12 @@ export function query (q: string | null): void {
     ast.errs.forEach((e) => { console.debug(e.toString()) })
   } else {
     switch (ast.ast.kind) {
-      case ASTKinds.HELLO: {
-        const hello = document.getElementById('hello')
-        if (hello !== null) {
-          hello.style.display = 'block'
-        }
+      case ASTKinds.greeting: {
+        hello()
+        break
+      }
+      case ASTKinds.greeting_with_name: {
+        hello_with_name(ast.ast)
         break
       }
       case ASTKinds.CONVERSION: {
