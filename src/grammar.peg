@@ -24,7 +24,7 @@ import Fraction from 'fraction.js';
 
 QUERY := HELLO | CONVERSION
 
-greeting_prefix := '^\s*hello'i 
+greeting_prefix := '^\s*' 'hello|hi|greetings|salutations'i 
 greeting_suffix := '(?:\s*[,.!?]*)*$'
 greeting := greeting_prefix suffix=greeting_suffix
 greeting_with_name := greeting_prefix {'\s*,\s*' | '\s+'} name='[^,.!?]+' greeting_suffix
