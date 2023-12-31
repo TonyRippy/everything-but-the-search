@@ -36,7 +36,7 @@ CONVERSION := 'what (?:is|are)\s+'i? quantity=NUMBER '\s*' from_unit=UNIT '\s*' 
 integer := literal='[+-]?\d+'
            .value = Fraction { return new Fraction(this.literal); }
 
-decimal := literal='\d*\.\d+'
+decimal := literal='[+-]?\d*\.\d+'
            .value = Fraction { return new Fraction(this.literal); }
 
 scientific := literal='[+-]?(?:\d*\.\d+|\d+)e[+-]?\d+'
@@ -49,11 +49,11 @@ NUMBER := scientific | decimal | integer
  // UNITS OF MEASUREMENT //
 //////////////////////////
 
-bit := 'bits?'i
-nibble := 'nibbles?'i
-byte := 'bytes?'i | 'B'i
-kilobyte := 'kilobytes?' | 'KB'i
-megabyte := 'megabytes?'i | 'MB'i
-gigabyte := 'gigabytes?'i | 'GB'i
+bit := literal='bits?'i
+nibble := literal='nibbles?'i
+byte := literal={'bytes?'i | 'B'i}
+kilobyte := literal={'kilobytes?' | 'KB'i}
+megabyte := literal={'megabytes?'i | 'MB'i}
+gigabyte := literal={'gigabytes?'i | 'GB'i}
 
 UNIT := bit | nibble | byte | kilobyte | megabyte | gigabyte

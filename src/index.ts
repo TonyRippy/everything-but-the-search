@@ -34,19 +34,22 @@ export function query (q: string | null): void {
     ast.errs.forEach((e) => { console.debug(e.toString()) })
   } else {
     switch (ast.ast.kind) {
-      case ASTKinds.HELLO:
+      case ASTKinds.HELLO: {
         const hello = document.getElementById('hello')
         if (hello !== null) {
           hello.style.display = 'block'
         }
         break
-      case ASTKinds.CONVERSION:
+      }
+      case ASTKinds.CONVERSION: {
         convert(ast.ast)
         break
-      default:
+      }
+      default: {
         // TODO: This is an oopsie. Provide link to file GitHub issue.
         console.error('Unknown AST kind.')
         console.error(ast.ast)
+      }
     }
   }
 }

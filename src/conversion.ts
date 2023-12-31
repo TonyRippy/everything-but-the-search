@@ -15,146 +15,55 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { CONVERSION } from './parser'
-import type Fraction from 'fraction.js'
+import { ASTKinds } from './parser'
+import Fraction from 'fraction.js'
 
-// #[derive(Debug, PartialEq)]
-// enum BaseUnit {
-//     Bytes,
-// }
+enum BaseUnit {
+  Bytes,
+}
 
-// struct Unit {
-//     name: String,
-//     base: BaseUnit,
-//     quantity: Rational64,
-// }
+class Unit {
+  public name: string
+  public base: BaseUnit
+  public quantity: Fraction
 
-// fn format_ratio(n: i64, d: i64) -> String {
-//   let (whole, remainder) = n.div_rem(&d);
-//   if remainder == 0 {
-//       return whole.to_string();
-//   }
-//   if whole == 0 {
-//       return format!("{}/{}", n, d);
-//   }
-
-//     //         format!("{} {}/{}", whole, remainder, d)
-//     //     }
-//     // } else {
-//     // if d % 2 == 0 {
-//     // }
-
-//     //     format!("{}/{}", ratio.numer(), ratio.denom())
-//     // }
-// }
-
-// fn parse_integer(pair: Pair<Rule>) -> Result<i64, ParseIntError> {
-//     debug_assert_eq!(pair.as_rule(), Rule::integer);
-//     pair.as_str().parse::<i64>()
-// }
-
-// fn calc_decimal(whole: i64, fraction: &str) -> Result<Rational64, std::num::ParseIntError> {
-//     let fraction_digits = fraction.len() as u32;
-//     let fraction = fraction.parse::<i64>()?;
-//     let denominator = 10i64.pow(fraction_digits);
-//     Ok(num_rational::Rational64::new(
-//         whole * denominator + fraction,
-//         denominator,
-//     ))
-// }
-
-// fn parse_decimal(pair: Pair<Rule>) -> Result<Rational64, ParseIntError> {
-//     debug_assert_eq!(pair.as_rule(), Rule::decimal);
-//     let mut inner = pair.into_inner();
-//     match (inner.next(), inner.next()) {
-//         (Some(first), Some(second)) => {
-//             debug_assert_eq!(first.as_rule(), Rule::digits);
-//             debug_assert_eq!(second.as_rule(), Rule::digits);
-//             calc_decimal(first.as_str().parse::<i64>()?, second.as_str())
-//         }
-//         (Some(second), None) => {
-//             debug_assert_eq!(second.as_rule(), Rule::digits);
-//             calc_decimal(0, second.as_str())
-//         }
-//         _ => unreachable!(),
-//     }
-// }
-
-// fn parse_scientific(pair: Pair<Rule>) -> Result<Rational64, ParseIntError> {
-//     debug_assert_eq!(pair.as_rule(), Rule::scientific);
-//     let mut inner = pair.into_inner();
-//     let first = inner.next().unwrap();
-//     let first = match first.as_rule() {
-//         Rule::integer => num_rational::Rational64::from_integer(parse_integer(first)?),
-//         Rule::decimal => parse_decimal(first)?,
-//         _ => unreachable!(),
-//     };
-
-//     let second = inner.next().unwrap();
-//     debug_assert_eq!(second.as_rule(), Rule::exponent);
-//     let second = second.as_str().parse::<i64>()?;
-//     debug_assert!(inner.next().is_none());
-//     Ok(first
-//         * if second < 0 {
-//             num_rational::Rational64::new(1, 10i64.pow(-second as u32))
-//         } else {
-//             num_rational::Rational64::new(10i64.pow(second as u32), 1)
-//         })
-// }
-
-// fn parse_number_without_sign(pair: Pair<Rule>) -> Result<Rational64, ParseIntError> {
-//     match pair.as_rule() {
-//         Rule::integer => Ok(num_rational::Rational64::from_integer(parse_integer(pair)?)),
-//         Rule::decimal => parse_decimal(pair),
-//         Rule::scientific => parse_scientific(pair),
-//         _ => unreachable!(),
-//     }
-// }
-
-// fn parse_number(pair: Pair<Rule>) -> Result<Rational64, ParseIntError> {
-//     debug_assert_eq!(pair.as_rule(), Rule::number);
-//     let mut inner = pair.into_inner();
-//     let pair = inner.next().unwrap();
-//     if pair.as_rule() == Rule::sign {
-//         let negative = pair.as_str() == "-";
-//         let number = parse_number_without_sign(inner.next().unwrap())?;
-//         Ok(if negative { -number } else { number })
-//     } else {
-//         parse_number_without_sign(pair)
-//     }
-// }
-
-// fn parse_unit(pair: Pair<Rule>) -> Result<Unit, String> {
-//     debug_assert_eq!(pair.as_rule(), Rule::unit);
-//     let pair = pair.into_inner().next().unwrap();
-//     match pair.as_rule() {
-//         Rule::bit => Ok(Unit {
-//             name: "bit".to_string(),
-//             base: BaseUnit::Bytes,
-//             quantity: Ratio::new(1, 8),
-//         }),
-//         Rule::byte => Ok(Unit {
-//             name: "byte".to_string(),
-//             base: BaseUnit::Bytes,
-//             quantity: Ratio::new(1, 1),
-//         }),
-//         Rule::kilobyte => Ok(Unit {
-//             name: "kilobyte".to_string(),
-//             base: BaseUnit::Bytes,
-//             quantity: Ratio::new(1_000, 1),
-//         }),
-//         Rule::megabyte => Ok(Unit {
-//             name: "megabyte".to_string(),
-//             base: BaseUnit::Bytes,
-//             quantity: Ratio::new(1_000_000, 1),
-//         }),
-//         Rule::gigabyte => Ok(Unit {
-//             name: "gigabyte".to_string(),
-//             base: BaseUnit::Bytes,
-//             quantity: Ratio::new(1_000_000_000, 1),
-//         }),
-//         x => Err(format!("unknown unit: {:?}", x)),
-//     }
-// }
+  constructor (kind: ASTKinds) {
+    switch (kind) {
+      case ASTKinds.bit:
+        this.name = 'bit'
+        this.base = BaseUnit.Bytes
+        this.quantity = new Fraction(1, 8)
+        break
+      case ASTKinds.nibble:
+        this.name = 'nibble'
+        this.base = BaseUnit.Bytes
+        this.quantity = new Fraction(1, 2)
+        break
+      case ASTKinds.byte:
+        this.name = 'byte'
+        this.base = BaseUnit.Bytes
+        this.quantity = new Fraction(1)
+        break
+      case ASTKinds.kilobyte:
+        this.name = 'kilobyte'
+        this.base = BaseUnit.Bytes
+        this.quantity = new Fraction(1_000)
+        break
+      case ASTKinds.megabyte:
+        this.name = 'megabyte'
+        this.base = BaseUnit.Bytes
+        this.quantity = new Fraction(1_000_000)
+        break
+      case ASTKinds.gigabyte:
+        this.name = 'gigabyte'
+        this.base = BaseUnit.Bytes
+        this.quantity = new Fraction(1_000_000_000)
+        break
+      default:
+        throw new Error(`AST kind ${kind} is not a known unit of measure.`)
+    }
+  }
+}
 
 // fn try_convert(mut pairs: Pairs<Rule>) -> Result<String, String> {
 //     let number = match pairs.next() {
@@ -197,101 +106,6 @@ import type Fraction from 'fraction.js'
 //     ))
 // }
 
-// pub fn try_query(query: &str) -> Result<String, String> {
-//     match QueryParser::parse(Rule::query, query) {
-//         Ok(mut pairs) => {
-//             dbg!(&pairs);
-//             let pair = pairs.next().unwrap();
-//             match pair.as_rule() {
-//                 Rule::conversion => try_convert(pair.into_inner()),
-//                 _ => unreachable!(),
-//             }
-//         }
-//         Err(e) => Err(format!("error while parsing query {:?}: {}", query, e)),
-//     }
-// }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_parse_decimal() {
-//         for (input, expected) in &[
-//             ("3.14159", Ratio::new(3_14159, 1_00000)),
-//             (".14159", Ratio::new(14159, 1_00000)),
-//             ("0.14159", Ratio::new(14159, 1_00000)),
-//         ] {
-//             let actual = parse_decimal(
-//                 QueryParser::parse(Rule::decimal, input)
-//                     .expect("unable to parse input")
-//                     .next()
-//                     .expect("no pairs produced by parser"),
-//             );
-//             assert_eq!(Ok(*expected), actual, "with input: {:?}", input);
-//         }
-//     }
-
-//     #[test]
-//     fn test_parse_scientific() {
-//         for (input, expected) in &[
-//             ("1e6", Ratio::new(1_000_000, 1)),
-//             (".1e6", Ratio::new(100_000, 1)),
-//             ("1.1e6", Ratio::new(1_100_000, 1)),
-//             ("1.234e2", Ratio::new(1_234, 10)),
-//             ("1e-6", Ratio::new(1, 1_000_000)),
-//             ("1.2e-6", Ratio::new(12, 10_000_000)),
-//         ] {
-//             let actual = parse_scientific(
-//                 QueryParser::parse(Rule::scientific, input)
-//                     .expect("unable to parse input")
-//                     .next()
-//                     .expect("no pairs produced by parser"),
-//             );
-//             assert_eq!(Ok(*expected), actual, "with input: {:?}", input);
-//         }
-//     }
-
-//     #[test]
-//     fn test_parse_number() {
-//         for (input, expected) in &[
-//             ("3", Ratio::new(3, 1)),
-//             ("-3", Ratio::new(-3, 1)),
-//             ("+3", Ratio::new(3, 1)),
-//             ("3.14159", Ratio::new(3_14159, 1_00000)),
-//             (".14159", Ratio::new(14159, 1_00000)),
-//             ("0.14159", Ratio::new(14159, 1_00000)),
-//             ("-3.14159", Ratio::new(-3_14159, 1_00000)),
-//             ("-.14159", Ratio::new(-14159, 1_00000)),
-//             ("-0.14159", Ratio::new(-14159, 1_00000)),
-//             ("+3.14159", Ratio::new(3_14159, 1_00000)),
-//             ("+.14159", Ratio::new(14159, 1_00000)),
-//             ("+0.14159", Ratio::new(14159, 1_00000)),
-//             ("1e6", Ratio::new(1_000_000, 1)),
-//             ("+1e6", Ratio::new(1_000_000, 1)),
-//             ("-1e6", Ratio::new(-1_000_000, 1)),
-//             ("1e-6", Ratio::new(1, 1_000_000)),
-//             ("+1e-6", Ratio::new(1, 1_000_000)),
-//             ("-1e-6", Ratio::new(-1, 1_000_000)),
-//         ] {
-//             let actual = parse_number(
-//                 QueryParser::parse(Rule::number, input)
-//                     .expect("unable to parse input")
-//                     .next()
-//                     .expect("no pairs produced by parser"),
-//             );
-//             assert_eq!(Ok(*expected), actual, "with input: {:?}", input);
-//         }
-//     }
-
-//     #[test]
-//     fn test_bad_query() {
-//         for input in &["", "foo", "bar", "baz"] {
-//             let actual = try_query(input);
-//             assert!(actual.is_err(), "with input: {:?}", input);
-//         }
-//     }
-
 //     #[test]
 //     fn test_conversion() {
 //         for (input, expected) in &[
@@ -309,10 +123,10 @@ import type Fraction from 'fraction.js'
 //     }
 // }
 
-function convertParsed (quantity: Fraction, from: string, to: string): void {
-  console.log('Conversion')
+function convertParsed (quantity: Fraction, from: Unit, to: Unit): void {
+  console.log(`convert ${quantity.toString()} ${from.name} to ${to.name}`)
 }
 
 export function convert (query: CONVERSION): void {
-  convertParsed(query.quantity.value, query.from_unit, query.to_unit)
+  convertParsed(query.quantity.value, new Unit(query.from_unit.kind), new Unit(query.to_unit.kind))
 }

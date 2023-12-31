@@ -6,7 +6,7 @@
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
-    "generate": "tspeg src/grammar.peg src/parser.ts",
+    "generate": "tspeg --num-enums src/grammar.peg src/parser.ts",
     "build": "webpack",
     "start": "webpack-dev-server --open",
     "lint": "eslint src/**/*.ts",
