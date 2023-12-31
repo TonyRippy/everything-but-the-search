@@ -35,7 +35,10 @@ export function query (q: string | null): void {
   } else {
     switch (ast.ast.kind) {
       case ASTKinds.HELLO:
-        console.log('Hello')
+        const hello = document.getElementById('hello')
+        if (hello !== null) {
+          hello.style.display = 'block'
+        }
         break
       case ASTKinds.CONVERSION:
         convert(ast.ast)
