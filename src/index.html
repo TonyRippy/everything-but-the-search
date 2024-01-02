@@ -37,8 +37,36 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     </form>
     <div id="results">
       <div id="hello">
-        👋 Hi!
+        &#x1F44B; Hi!
         <div id="hello-note"></div>
+      </div>
+      <div id="converter">
+        <select id="converter-type">
+          <option value="area" disabled>Area</option>
+          <option value="data-storage">Digital Storage</option>
+          <option value="data-transfer" disabled>Data Transfer Rate</option>
+          <option value="energy" disabled>Energy</option>
+          <option value="frequency" disabled>Frequency</option>
+          <option value="fuel" disabled>Fuel Economy</option>
+          <option value="length" disabled>Length</option>
+          <option value="mass" disabled>Mass</option>
+          <option value="plane-angle" disabled>Plane Angle</option>
+          <option value="pressure" disabled>Pressure</option>
+          <option value="speed" disabled>Speed</option>
+          <option value="temperature" disabled>Temperature</option>
+          <option value="time" disabled>Time</option>
+          <option value="volume" disabled>Volume</option>
+        </select>
+        <div id="converter-note"></div>
+        <div class="converter-box">
+          <input id="converter-from-value" class="converter-result"/>
+          <select id="converter-from-unit"></select>
+        </div>
+        <span id="converter-symbol" class="converter-result">&#x21C4;</span>
+        <div class="converter-box">
+          <input id="converter-to-value" class="converter-result"/>
+          <select id="converter-to-unit"></select>
+        </div>
       </div>
     </div>
   </div>

@@ -63,15 +63,19 @@ form {
 }
 
 input {
-  display: block;
-  width: 90%;
   border: 1px solid #888;
-  border-radius: 15px;
-  margin: 1em auto 0 auto;
-  padding: 0.25em 1em 0.25em 1em;
+  border-radius: 10px;
   background-color: #14191f;
   color: white;
+}
+
+form input {
+  display: block;
+  width: 90%;
+  margin: 1em auto 0 auto;
+  border-radius: 15px;
   font-size: large;
+  padding: 0.25em 1em 0.25em 1em;
 }
 
 #results {
@@ -91,4 +95,61 @@ input {
 #hello-note {
   margin-top: 0.5em;
   font-size: large;
+}
+
+#converter {
+  display: none;
+  border: 1pt solid #444;
+  border-radius: 10px;
+  padding: 20px;
+  width: 694px;
+  margin: auto;
+}
+
+#converter select {
+  color: #c5c5c5;
+  font-size: 1em;
+  height: 2em;
+}
+
+#converter-type {
+  display: block;
+  border-radius: 5px;
+  padding-left: 10px;
+  margin-bottom: 1em;
+  width: 694px;
+  background-color: #14191f;
+}
+
+.converter-box {
+  display: inline-block;
+  width: 322px;
+}
+
+.converter-box input {
+  display: block;
+  width: 300px;
+  font-size: 30px;
+  border-radius: 5px 5px 0 0;
+  text-align: center;
+  padding: 10px 20px 5px 0;
+}
+
+.converter-box select {
+  display: block;
+  width: 322px;
+  border-radius: 0 0 5px 5px;
+  margin-top: -1px;
+  background-color: #1e2832;
+  text-align: center;
+}
+
+#converter-symbol {
+  margin: 0 6px;
+  display: inline-block;
+  width: 30px;
+  font-size: 30px;
+  vertical-align: top;
+  text-align: center;
+  padding: 11px 0 0 0;
 }

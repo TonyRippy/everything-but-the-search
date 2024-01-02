@@ -15,11 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { parse, ASTKinds } from './parser'
+import type { QUERY } from './parser'
 import { convert } from './conversion'
 import { hello, hello_with_name } from './hello'
+import { ServerError, QueryError } from './errors'
+
+function findHandler (ast: QUERY): () => void {
+  switch (ast.kind) {
+    case ASTKinds.greeting: {
+      return hello
+    }
+    case ASTKinds.greeting_with_name: {
+      return () => { hello_with_name(ast) }
+    }
+    case ASTKinds.CONVERSION: {
+      return () => { convert(ast) }
+    }
+    default: {
+      // TODO: This is an oopsie. Provide link to file GitHub issue.
+      throw new ServerError('Unknown AST kind')
+    }
+  }
+}
 
 export function query (q: string | null): void {
-  if (!q) {
+  if (q === null || q.length === 0) {
     // Nothing to do
     return
   }
@@ -33,29 +53,23 @@ export function query (q: string | null): void {
   results.style.display = 'block'
 
   // Parse the query and invoke the proper handler if a match is found.
-  const ast = parse(q)
-  if (ast.ast === null) {
-    // TODO: Give option to file GitHub issue.
-    ast.errs.forEach((e) => { console.debug(e.toString()) })
-  } else {
-    switch (ast.ast.kind) {
-      case ASTKinds.greeting: {
-        hello()
-        break
-      }
-      case ASTKinds.greeting_with_name: {
-        hello_with_name(ast.ast)
-        break
-      }
-      case ASTKinds.CONVERSION: {
-        convert(ast.ast)
-        break
-      }
-      default: {
-        // TODO: This is an oopsie. Provide link to file GitHub issue.
-        console.error('Unknown AST kind.')
-        console.error(ast.ast)
-      }
+  try {
+    const result = parse(q)
+    if (result.ast === null) {
+      result.errs.forEach((e) => { console.debug(e.toString()) })
+    } else {
+      const handler = findHandler(result.ast)
+      handler()
+    }
+  } catch (e) {
+    if (e instanceof ServerError) {
+      // TODO: Give option to file GitHub issue.
+      console.error(e)
+    } else if (e instanceof QueryError) {
+      // TODO: Provide guidance to user about how to improve/fix the query.
+      console.error(e)
+    } else {
+      throw e
     }
   }
 }
