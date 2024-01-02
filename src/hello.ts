@@ -21,14 +21,16 @@ export function hello (): void {
   if (hello === null) {
     return
   }
-  hello.style.display = 'block'  // makes the hello section visible
+  hello.style.display = 'block' // makes the hello section visible
 }
 
-export function hello_with_name (ast: greeting_with_name): void {
+export function helloWithName (ast: greeting_with_name): void {
   hello()
   const note = document.getElementById('hello-note')
   const name = ast.name
-  if (note && name && !name.match(/^\s*(?:ebts|everything\s+but\s+the\s+search)\s*$/i)) {
+  if (note !== null &&
+      name !== null &&
+      name.match(/^\s*(?:ebts|everything\s+but\s+the\s+search)\s*$/i) === null) {
     note.innerHTML = `(but my name isn't &ldquo;${name.trim()}&rdquo;)`
   }
 }

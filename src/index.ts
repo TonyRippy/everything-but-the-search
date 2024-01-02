@@ -17,7 +17,7 @@
 import { parse, ASTKinds } from './parser'
 import type { QUERY } from './parser'
 import { convert } from './conversion'
-import { hello, hello_with_name } from './hello'
+import { hello, helloWithName } from './hello'
 import { ServerError, QueryError } from './errors'
 
 function findHandler (ast: QUERY): () => void {
@@ -26,7 +26,7 @@ function findHandler (ast: QUERY): () => void {
       return hello
     }
     case ASTKinds.greeting_with_name: {
-      return () => { hello_with_name(ast) }
+      return () => { helloWithName(ast) }
     }
     case ASTKinds.CONVERSION: {
       return () => { convert(ast) }
