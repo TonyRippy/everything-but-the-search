@@ -16,20 +16,23 @@
 
 import { parse, ASTKinds } from './parser'
 import type { QUERY } from './parser'
-import { convert } from './conversion'
+import { handleConversion } from './conversion'
 import { hello, helloWithName } from './hello'
 import { ServerError, QueryError } from './errors'
 
-function findHandler (ast: QUERY): () => void {
+function handleQuery (ast: QUERY): void {
   switch (ast.kind) {
     case ASTKinds.greeting: {
-      return hello
+      hello()
+      return
     }
     case ASTKinds.greeting_with_name: {
-      return () => { helloWithName(ast) }
+      helloWithName(ast)
+      return
     }
     case ASTKinds.CONVERSION: {
-      return () => { convert(ast) }
+      handleConversion(ast)
+      return
     }
     default: {
       // TODO: This is an oopsie. Provide link to file GitHub issue.
@@ -58,8 +61,7 @@ export function query (q: string | null): void {
     if (result.ast === null) {
       result.errs.forEach((e) => { console.debug(e.toString()) })
     } else {
-      const handler = findHandler(result.ast)
-      handler()
+      handleQuery(result.ast)
     }
   } catch (e) {
     if (e instanceof ServerError) {

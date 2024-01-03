@@ -54,11 +54,27 @@ NUMBER := scientific | decimal | integer
  // UNITS OF MEASUREMENT //
 //////////////////////////
 
+// Data Storage Units
+
 bit := literal='bits?'i
 nibble := literal='nibbles?'i
 byte := literal={'bytes?'i | 'B'i}
 kilobyte := literal={'kilobytes?' | 'KB'i}
 megabyte := literal={'megabytes?'i | 'MB'i}
 gigabyte := literal={'gigabytes?'i | 'GB'i}
+terabyte := literal={'terabytes?'i | 'TB'i}
+petabyte := literal={'petabytes?'i | 'PB'i}
+exabyte := literal={'exabytes?'i | 'EB'i}
 
-UNIT := bit | nibble | byte | kilobyte | megabyte | gigabyte
+kibibyte := literal={'kibibytes?'i | 'KiB'i}
+mebibyte := literal={'mebibytes?'i | 'MiB'i}
+gibibyte := literal={'gibibytes?'i | 'GiB'i}
+tebibyte := literal={'tebibytes?'i | 'TiB'i}
+pebibyte := literal={'pebibytes?'i | 'PiB'i}
+exbibyte := literal={'exbibytes?'i | 'EiB'i}
+
+data_storage_unit := bit | nibble | byte
+                   | kilobyte | megabyte | gigabyte | terabyte | petabyte | exabyte
+                   | kibibyte | mebibyte | gibibyte | tebibyte | pebibyte | exbibyte
+
+UNIT :=  data_storage_unit
