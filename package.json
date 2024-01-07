@@ -34,7 +34,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "fraction.js": "^4.3.7",
+    "fraction.js": "TonyRippy/fraction.js#e0e110afebeaa0dcff4c30fff736e01ee408adc1",
     "tspeg": "^3.3.1"
   }
 }
