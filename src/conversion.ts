@@ -268,8 +268,19 @@ function attach (converter: UnitConverter): void {
     selectTo.appendChild(option)
   }
 
-  // Set the input value
+  // Set the input/output values
   inputFrom.value = converter.getFromQuantity().toString()
+  inputTo.value = converter.getToQuantity().toString()
+
+  // Set the event handlers
+  selectFrom.onchange = (e) => {
+    const unit = UNITS.get(parseInt(selectFrom.value))
+    if (unit === undefined) {
+      throw new ServerError(`Unknown unit: ${selectFrom.value}`)
+    }
+    converter.setFromUnit(unit)
+    inputTo.value = converter.getToQuantity().toString()
+  }
   inputFrom.oninput = (e) => {
     try {
       const quantity = new Fraction(inputFrom.value)
@@ -278,10 +289,15 @@ function attach (converter: UnitConverter): void {
     } catch {
       inputTo.value = ''
     }
-  };
-
-  // Set the output value
-  inputTo.value = converter.getToQuantity().toString()
+  }
+  selectTo.onchange = (e) => {
+    const unit = UNITS.get(parseInt(selectTo.value))
+    if (unit === undefined) {
+      throw new ServerError(`Unknown unit: ${selectTo.value}`)
+    }
+    converter.setToUnit(unit)
+    inputFrom.value = converter.getFromQuantity().toString()
+  }
   inputTo.oninput = (e) => {
     try {
       const quantity = new Fraction(inputTo.value)
@@ -290,26 +306,6 @@ function attach (converter: UnitConverter): void {
     } catch {
       inputFrom.value = ''
     }
-  };
-
-  selectFrom.onchange = (e) => {
-    const unit = UNITS.get(parseInt(selectFrom.value))
-    if (unit === undefined) {
-      throw new ServerError(`Unknown unit: ${selectFrom.value}`)
-    }
-    converter.setFromUnit(unit)
-    inputFrom.value = converter.getFromQuantity().toString()
-    inputTo.value = converter.getToQuantity().toString()
-  }
-
-  selectTo.onchange = (e) => {
-    const unit = UNITS.get(parseInt(selectTo.value))
-    if (unit === undefined) {
-      throw new ServerError(`Unknown unit: ${selectTo.value}`)
-    }
-    converter.setToUnit(unit)
-    inputFrom.value = converter.getFromQuantity().toString()
-    inputTo.value = converter.getToQuantity().toString()
   }
 }
 
