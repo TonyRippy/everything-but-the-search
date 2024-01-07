@@ -1,10 +1,10 @@
 import {
   parse,
   ASTKinds,
-  HELLO,
-  CONVERSION,
-  greeting,
-  greeting_with_name,
+  HelloQuery,
+  ConversionQuery,
+  GreetingWithoutName,
+  GreetingWithName,
 } from '../src/parser'
 
 import Fraction from 'fraction.js'
@@ -14,36 +14,36 @@ describe('Hello World parsing', () => {
   test('should work without a name', () => {
     let ret = parse('hello')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as greeting
-    expect(ast.kind).toBe(ASTKinds.greeting)
+    let ast = ret.ast as GreetingWithoutName
+    expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with a trailing comma', () => {
     let ret = parse('hello,')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HELLO
-    expect(ast.kind).toBe(ASTKinds.greeting)
+    let ast = ret.ast as HelloQuery
+    expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with punctuation', () => {
     let ret = parse('hello!!!')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HELLO
-    expect(ast.kind).toBe(ASTKinds.greeting)
+    let ast = ret.ast as HelloQuery
+    expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with leading whitespace', () => {
     let ret = parse('  hello')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HELLO
-    expect(ast.kind).toBe(ASTKinds.greeting)
+    let ast = ret.ast as HelloQuery
+    expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with trailing whitespace', () => {
     let ret = parse('hello  ')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HELLO
-    expect(ast.kind).toBe(ASTKinds.greeting)
+    let ast = ret.ast as HelloQuery
+    expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should not work without space before name', () => {
@@ -54,16 +54,16 @@ describe('Hello World parsing', () => {
   test('forgive a space if a comma', () => {
     let ret = parse('Hello,world')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as greeting_with_name
-    expect(ast.kind).toBe(ASTKinds.greeting_with_name)
+    let ast = ret.ast as GreetingWithName
+    expect(ast.kind).toBe(ASTKinds.GreetingWithName)
     expect(ast.name).toBe('world')
   })
 
   test('should capture the name', () => {
     let ret = parse('Hello, World!')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as greeting_with_name
-    expect(ast.kind).toBe(ASTKinds.greeting_with_name)
+    let ast = ret.ast as GreetingWithName
+    expect(ast.kind).toBe(ASTKinds.GreetingWithName)
     expect(ast.name).toBe('World')
   })
 
@@ -72,7 +72,7 @@ describe('Hello World parsing', () => {
 function parseFraction(input: string): Fraction {
   let ret = parse(`${input} bytes in bytes`)
   expect(ret.ast).not.toBeNull()
-  let ast = ret.ast as CONVERSION
+  let ast = ret.ast as ConversionQuery
   return ast.quantity.value
 }
 
@@ -137,11 +137,11 @@ describe('Conversion parsing', () => {
   test('full sentence', () => {
     let ret = parse('What is 1 GB in bytes?')
     expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as CONVERSION
-    expect(ast.kind).toBe(ASTKinds.CONVERSION)
+    let ast = ret.ast as ConversionQuery
+    expect(ast.kind).toBe(ASTKinds.ConversionQuery)
     expect(ast.quantity.value).toStrictEqual(new Fraction(1))
-    expect(ast.from_unit.kind).toBe(ASTKinds.gigabyte)
-    expect(ast.to_unit.kind).toBe(ASTKinds.byte)
+    expect(ast.fromUnit.kind).toBe(ASTKinds.Gigabyte)
+    expect(ast.toUnit.kind).toBe(ASTKinds.Byte)
   })
 
 })

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { CONVERSION, UNIT } from './parser'
+import type { ConversionQuery, Unit as UnitAST } from './parser'
 import { ASTKinds } from './parser'
 import Fraction from 'fraction.js'
 import { ServerError, QueryError } from './errors'
@@ -37,107 +37,107 @@ export const UNITS = new Map<ASTKinds, Unit>([
 
   // Data storage units
   // https://en.wikipedia.org/wiki/Byte#Multiple-byte_units
-  [ASTKinds.bit, new Unit(
+  [ASTKinds.Bit, new Unit(
     'Bit',
-    ASTKinds.bit,
+    ASTKinds.Bit,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.div(8e9),
     (quantity: Fraction) => quantity.mul(8e9)
   )],
-  [ASTKinds.nibble, new Unit(
+  [ASTKinds.Nibble, new Unit(
     'Nibble',
-    ASTKinds.nibble,
+    ASTKinds.Nibble,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.div(2e9),
     (quantity: Fraction) => quantity.mul(2e9)
   )],
-  [ASTKinds.byte, new Unit(
+  [ASTKinds.Byte, new Unit(
     'Byte (B)',
-    ASTKinds.byte,
+    ASTKinds.Byte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.div(1e9),
     (quantity: Fraction) => quantity.mul(1e9)
   )],
-  [ASTKinds.kilobyte, new Unit(
+  [ASTKinds.Kilobyte, new Unit(
     'Kilobyte (KB)',
-    ASTKinds.kilobyte,
+    ASTKinds.Kilobyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.div(1e6),
     (quantity: Fraction) => quantity.mul(1e6)
   )],
-  [ASTKinds.megabyte, new Unit(
+  [ASTKinds.Megabyte, new Unit(
     'Megabyte (MB)',
-    ASTKinds.megabyte,
+    ASTKinds.Megabyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.div(1e3),
     (quantity: Fraction) => quantity.mul(1e3)
   )],
-  [ASTKinds.gigabyte, new Unit(
+  [ASTKinds.Gigabyte, new Unit(
     'Gigabyte (GB)',
-    ASTKinds.gigabyte,
+    ASTKinds.Gigabyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity,
     (quantity: Fraction) => quantity
   )],
-  [ASTKinds.terabyte, new Unit(
+  [ASTKinds.Terabyte, new Unit(
     'Terabyte (TB)',
-    ASTKinds.terabyte,
+    ASTKinds.Terabyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(1e3),
     (quantity: Fraction) => quantity.div(1e3)
   )],
-  [ASTKinds.petabyte, new Unit(
+  [ASTKinds.Petabyte, new Unit(
     'Petabyte (PB)',
-    ASTKinds.petabyte,
+    ASTKinds.Petabyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(1e6),
     (quantity: Fraction) => quantity.div(1e6)
   )],
-  [ASTKinds.exabyte, new Unit(
+  [ASTKinds.Exabyte, new Unit(
     'Exabyte (EB)',
-    ASTKinds.exabyte,
+    ASTKinds.Exabyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(1e9),
     (quantity: Fraction) => quantity.div(1e9)
   )],
-  [ASTKinds.kibibyte, new Unit(
+  [ASTKinds.Kibibyte, new Unit(
     'Kibibyte (KiB)',
-    ASTKinds.kibibyte,
+    ASTKinds.Kibibyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(1 << 10, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(1 << 10, 1e9))
   )],
-  [ASTKinds.mebibyte, new Unit(
+  [ASTKinds.Mebibyte, new Unit(
     'Mebibyte (MiB)',
-    ASTKinds.mebibyte,
+    ASTKinds.Mebibyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(1 << 20, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(1 << 20, 1e9))
   )],
-  [ASTKinds.gibibyte, new Unit(
+  [ASTKinds.Gibibyte, new Unit(
     'Gibibyte (GiB)',
-    ASTKinds.gibibyte,
+    ASTKinds.Gibibyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(1 << 30, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(1 << 30, 1e9))
   )],
-  [ASTKinds.tebibyte, new Unit(
+  [ASTKinds.Tebibyte, new Unit(
     'Tebibyte (TiB)',
-    ASTKinds.tebibyte,
+    ASTKinds.Tebibyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(2 ** 40, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(2 ** 40, 1e9))
   )],
-  [ASTKinds.pebibyte, new Unit(
+  [ASTKinds.Pebibyte, new Unit(
     'Pebibyte (PiB)',
-    ASTKinds.pebibyte,
+    ASTKinds.Pebibyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(2 ** 50, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(2 ** 50, 1e9))
   )],
-  [ASTKinds.exbibyte, new Unit(
+  [ASTKinds.Exbibyte, new Unit(
     'Exbibyte (EiB)',
-    ASTKinds.exbibyte,
+    ASTKinds.Exbibyte,
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(2 ** 60, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(2 ** 60, 1e9))
@@ -309,7 +309,7 @@ function attach (converter: UnitConverter): void {
   }
 }
 
-function toUnit (ast: UNIT): Unit {
+function toUnit (ast: UnitAST): Unit {
   const unit = UNITS.get(ast.kind)
   if (unit === undefined) {
     throw new ServerError(`Unhandled measurement unit: "${ast.literal}" (${ast.kind})`)
@@ -317,7 +317,7 @@ function toUnit (ast: UNIT): Unit {
   return unit
 }
 
-export function handleConversion (query: CONVERSION): void {
-  const converter = new UnitConverter(query.quantity.value, toUnit(query.from_unit), toUnit(query.to_unit))
+export function handleConversion (query: ConversionQuery): void {
+  const converter = new UnitConverter(query.quantity.value, toUnit(query.fromUnit), toUnit(query.toUnit))
   attach(converter)
 }

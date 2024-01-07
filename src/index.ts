@@ -15,22 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { parse, ASTKinds } from './parser'
-import type { QUERY } from './parser'
+import type { Query } from './parser'
 import { handleConversion } from './conversion'
 import { hello, helloWithName } from './hello'
 import { ServerError, QueryError } from './errors'
 
-function handleQuery (ast: QUERY): void {
+function handleQuery (ast: Query): void {
   switch (ast.kind) {
-    case ASTKinds.greeting: {
+    case ASTKinds.GreetingWithoutName: {
       hello()
       return
     }
-    case ASTKinds.greeting_with_name: {
+    case ASTKinds.GreetingWithName: {
       helloWithName(ast)
       return
     }
-    case ASTKinds.CONVERSION: {
+    case ASTKinds.ConversionQuery: {
       handleConversion(ast)
       return
     }
@@ -41,8 +41,13 @@ function handleQuery (ast: QUERY): void {
   }
 }
 
-export function query (q: string | null): void {
-  if (q === null || q.length === 0) {
+function query (q: string | null): void {
+  if (q === null) {
+    // Nothing to do
+    return
+  }
+  q = q.trim()
+  if (q.length === 0) {
     // Nothing to do
     return
   }

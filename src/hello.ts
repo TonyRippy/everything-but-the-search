@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { greeting_with_name } from './parser'
+import type { GreetingWithName } from './parser'
 
 export function hello (): void {
   const hello = document.getElementById('hello')
@@ -24,7 +24,7 @@ export function hello (): void {
   hello.style.display = 'block' // makes the hello section visible
 }
 
-export function helloWithName (ast: greeting_with_name): void {
+export function helloWithName (ast: GreetingWithName): void {
   hello()
   const note = document.getElementById('hello-note')
   const name = ast.name
