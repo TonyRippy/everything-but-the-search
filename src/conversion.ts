@@ -318,6 +318,20 @@ function toUnit (ast: UnitAST): Unit {
 }
 
 export function handleConversion (query: ConversionQuery): void {
-  const converter = new UnitConverter(query.quantity.value, toUnit(query.fromUnit), toUnit(query.toUnit))
+  const converter = new UnitConverter(
+    query.quantity.value,
+    toUnit(query.fromUnit),
+    toUnit(query.toUnit))
+  attach(converter)
+}
+
+export function showUnitConverter (): void {
+  const converter = new UnitConverter(
+    new Fraction(1),
+    /* eslint-disable @typescript-eslint/no-non-null-assertion */
+    UNITS.get(ASTKinds.Kilobyte)!,
+    UNITS.get(ASTKinds.Byte)!
+    /* eslint-enable @typescript-eslint/no-non-null-assertion */
+  )
   attach(converter)
 }

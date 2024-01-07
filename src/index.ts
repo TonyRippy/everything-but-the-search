@@ -16,7 +16,7 @@
 
 import { parse, ASTKinds } from './parser'
 import type { Query } from './parser'
-import { handleConversion } from './conversion'
+import { handleConversion, showUnitConverter } from './conversion'
 import { hello, helloWithName } from './hello'
 import { ServerError, QueryError } from './errors'
 
@@ -32,6 +32,10 @@ function handleQuery (ast: Query): void {
     }
     case ASTKinds.ConversionQuery: {
       handleConversion(ast)
+      return
+    }
+    case ASTKinds.UnitConverter: {
+      showUnitConverter()
       return
     }
     default: {

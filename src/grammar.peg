@@ -22,13 +22,15 @@ import Fraction from 'fraction.js';
  // QUERIES //
 /////////////
 
-Query := HelloQuery | ConversionQuery
+Query := HelloQuery | UnitConverter | ConversionQuery
 
 GreetingPrefix := '^\s*' 'hello|hi|greetings|salutations'i
 GreetingSuffix := '(?:\s*[,.!?]*)*$'
 GreetingWithoutName := GreetingPrefix suffix=GreetingSuffix
 GreetingWithName := GreetingPrefix {'\s*,\s*' | '\s+'} name='[^,.!?]+' GreetingSuffix
 HelloQuery := GreetingWithName | GreetingWithoutName
+
+UnitConverter := literal='unit\s+converter'i
 
 ConvertPrefix := 'what\s+(?:is|are)\s+'i | 'convert\s+'i
 ConversionQuery := '\s*' ConvertPrefix? quantity=Number '\s*' fromUnit=Unit '\s*' {'in\s*to' | 'in' | 'to' | 'as'} '\s+' toUnit=Unit '\s*\?'?
