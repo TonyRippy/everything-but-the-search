@@ -98,11 +98,6 @@ Decade := literal='decades?'i
 Century := literal='centur(?:y|ies)'i
 Millennium := literal='millenni(?:a|um)'i
 
-// LunarCycle := literal='lunar\s+cycles?'i
-// Lustrum := literal='lustrum'
-// SiderealDay := literal='sidereal\s+days?'
-// SiderealYear := literal='sidereal\syears?'
-
 TimeUnit := Nanosecond | Microsecond | Millisecond | Second | Minute | Hour | Helek
           | Day | Week | Fortnight | Month | Year | LeapYear | Decade | Century | Millennium
 
