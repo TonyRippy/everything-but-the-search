@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { parse, ASTKinds } from './parser'
-import type { Query } from './parser'
+import type { Query, SyntaxErr } from './parser'
+import { showFallback } from './fallback'
 import { handleConversion, showUnitConverter } from './conversion'
 import { hello, helloWithName } from './hello'
 import { ServerError, QueryError } from './errors'
@@ -45,6 +46,11 @@ function handleQuery (ast: Query): void {
   }
 }
 
+function handleParseFailure (errs: SyntaxErr[]): void {
+  // SOMETHING.innerText = `No results found for "${q}".`
+  errs.forEach((e) => { console.debug(e.toString()) })
+}
+
 function query (q: string | null): void {
   if (q === null) {
     // Nothing to do
@@ -66,9 +72,10 @@ function query (q: string | null): void {
 
   // Parse the query and invoke the proper handler if a match is found.
   try {
+    showFallback(q)
     const result = parse(q)
     if (result.ast === null) {
-      result.errs.forEach((e) => { console.debug(e.toString()) })
+      handleParseFailure(result.errs)
     } else {
       handleQuery(result.ast)
     }

@@ -86,6 +86,24 @@ form input {
   padding-top: 2em;
 }
 
+#fallback {
+  display: none;
+  border-top: 1px solid #444;
+  margin-top: 2em;
+  padding-top: 2em;
+  a {
+    color: #c5c5c5;
+    text-decoration: none;
+    &:hover {
+      color: yellow;
+      text-decoration: underline;
+    }
+  }
+  li {
+    list-style-type: "⇒  ";
+  }
+}
+
 #hello {
   display: none;
   font-size: xx-large;
