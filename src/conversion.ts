@@ -128,43 +128,43 @@ export const UNITS = new Map<ASTKinds, Unit>([
     'Kibibyte (KiB)',
     ASTKinds.Kibibyte,
     MeasurementTypes.DataStorage,
-    (quantity: Fraction) => quantity.mul(new Fraction(1 << 10, 1e9)),
-    (quantity: Fraction) => quantity.div(new Fraction(1 << 10, 1e9))
+    (quantity: Fraction) => quantity.mul(1 << 10, 1e9),
+    (quantity: Fraction) => quantity.div(1 << 10, 1e9)
   )],
   [ASTKinds.Mebibyte, new Unit(
     'Mebibyte (MiB)',
     ASTKinds.Mebibyte,
     MeasurementTypes.DataStorage,
-    (quantity: Fraction) => quantity.mul(new Fraction(1 << 20, 1e9)),
-    (quantity: Fraction) => quantity.div(new Fraction(1 << 20, 1e9))
+    (quantity: Fraction) => quantity.mul(1 << 20, 1e9),
+    (quantity: Fraction) => quantity.div(1 << 20, 1e9)
   )],
   [ASTKinds.Gibibyte, new Unit(
     'Gibibyte (GiB)',
     ASTKinds.Gibibyte,
     MeasurementTypes.DataStorage,
-    (quantity: Fraction) => quantity.mul(new Fraction(1 << 30, 1e9)),
-    (quantity: Fraction) => quantity.div(new Fraction(1 << 30, 1e9))
+    (quantity: Fraction) => quantity.mul(1 << 30, 1e9),
+    (quantity: Fraction) => quantity.div(1 << 30, 1e9)
   )],
   [ASTKinds.Tebibyte, new Unit(
     'Tebibyte (TiB)',
     ASTKinds.Tebibyte,
     MeasurementTypes.DataStorage,
-    (quantity: Fraction) => quantity.mul(new Fraction(2 ** 40, 1e9)),
-    (quantity: Fraction) => quantity.div(new Fraction(2 ** 40, 1e9))
+    (quantity: Fraction) => quantity.mul(2 ** 40, 1e9),
+    (quantity: Fraction) => quantity.div(2 ** 40, 1e9)
   )],
   [ASTKinds.Pebibyte, new Unit(
     'Pebibyte (PiB)',
     ASTKinds.Pebibyte,
     MeasurementTypes.DataStorage,
-    (quantity: Fraction) => quantity.mul(new Fraction(2 ** 50, 1e9)),
-    (quantity: Fraction) => quantity.div(new Fraction(2 ** 50, 1e9))
+    (quantity: Fraction) => quantity.mul(2 ** 50, 1e9),
+    (quantity: Fraction) => quantity.div(2 ** 50, 1e9)
   )],
   [ASTKinds.Exbibyte, new Unit(
     'Exbibyte (EiB)',
     ASTKinds.Exbibyte,
     MeasurementTypes.DataStorage,
-    (quantity: Fraction) => quantity.mul(new Fraction(2 ** 60, 1e9)),
-    (quantity: Fraction) => quantity.div(new Fraction(2 ** 60, 1e9))
+    (quantity: Fraction) => quantity.mul(2 ** 60, 1e9),
+    (quantity: Fraction) => quantity.div(2 ** 60, 1e9)
   )],
 
   // Time units
