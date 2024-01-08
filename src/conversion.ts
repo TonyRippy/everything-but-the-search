@@ -21,6 +21,29 @@ import { ServerError, QueryError } from './errors'
 
 enum MeasurementTypes {
   DataStorage = 'data-storage',
+  Time = 'time',
+}
+
+function defaultFrom (type: MeasurementTypes): ASTKinds {
+  switch (type) {
+    case MeasurementTypes.DataStorage:
+      return ASTKinds.Megabyte
+    case MeasurementTypes.Time:
+      return ASTKinds.Minute
+    default:
+      throw new ServerError('Unhandled measurement type')
+  }
+}
+
+function defaultTo (type: MeasurementTypes): ASTKinds {
+  switch (type) {
+    case MeasurementTypes.DataStorage:
+      return ASTKinds.Byte
+    case MeasurementTypes.Time:
+      return ASTKinds.Second
+    default:
+      throw new ServerError('Unhandled measurement type')
+  }
 }
 
 export class Unit {
@@ -37,6 +60,7 @@ export const UNITS = new Map<ASTKinds, Unit>([
 
   // Data storage units
   // https://en.wikipedia.org/wiki/Byte#Multiple-byte_units
+  // The base unit used here is the gigabyte.
   [ASTKinds.Bit, new Unit(
     'Bit',
     ASTKinds.Bit,
@@ -141,7 +165,124 @@ export const UNITS = new Map<ASTKinds, Unit>([
     MeasurementTypes.DataStorage,
     (quantity: Fraction) => quantity.mul(new Fraction(2 ** 60, 1e9)),
     (quantity: Fraction) => quantity.div(new Fraction(2 ** 60, 1e9))
+  )],
+
+  // Time units
+  // https://en.wikipedia.org/wiki/Unit_of_time
+  // The base unit used here is the second.
+  [ASTKinds.Nanosecond, new Unit(
+    'Nanosecond (ns)',
+    ASTKinds.Nanosecond,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.div(1e9),
+    (quantity: Fraction) => quantity.mul(1e9)
+  )],
+  [ASTKinds.Microsecond, new Unit(
+    'Microsecond (μs)',
+    ASTKinds.Microsecond,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.div(1e6),
+    (quantity: Fraction) => quantity.mul(1e6)
+  )],
+  [ASTKinds.Millisecond, new Unit(
+    'Millisecond (ms)',
+    ASTKinds.Millisecond,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.div(1e3),
+    (quantity: Fraction) => quantity.mul(1e3)
+  )],
+  [ASTKinds.Second, new Unit(
+    'Second (s)',
+    ASTKinds.Second,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity,
+    (quantity: Fraction) => quantity
+  )],
+  [ASTKinds.Minute, new Unit(
+    'Minute (min)',
+    ASTKinds.Minute,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(60),
+    (quantity: Fraction) => quantity.div(60)
+  )],
+  [ASTKinds.Hour, new Unit(
+    'Hour (h)',
+    ASTKinds.Hour,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(3600),
+    (quantity: Fraction) => quantity.div(3600)
+  )],
+  [ASTKinds.Helek, new Unit(
+    'Helek',
+    ASTKinds.Helek,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(10, 3),
+    (quantity: Fraction) => quantity.div(10, 3)
+  )],
+  [ASTKinds.Day, new Unit(
+    'Day (d)',
+    ASTKinds.Day,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(86400),
+    (quantity: Fraction) => quantity.div(86400)
+  )],
+  [ASTKinds.Week, new Unit(
+    'Week (w)',
+    ASTKinds.Week,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(604800),
+    (quantity: Fraction) => quantity.div(604800)
+  )],
+  [ASTKinds.Fortnight, new Unit(
+    'Fortnight',
+    ASTKinds.Fortnight,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(1209600),
+    (quantity: Fraction) => quantity.div(1209600)
+  )],
+  [ASTKinds.Month, new Unit(
+    'Month',
+    ASTKinds.Month,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(2628000),
+    (quantity: Fraction) => quantity.div(2628000)
+  )],
+  [ASTKinds.Year, new Unit(
+    'Year (y)',
+    ASTKinds.Year,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(31536000),
+    (quantity: Fraction) => quantity.div(31536000)
+  )],
+  [ASTKinds.LeapYear, new Unit(
+    'Leap Year',
+    ASTKinds.LeapYear,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(31622400),
+    (quantity: Fraction) => quantity.div(31622400)
+  )],
+  [ASTKinds.Decade, new Unit(
+    'Decade',
+    ASTKinds.Decade,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(315576000),
+    (quantity: Fraction) => quantity.div(315576000)
+  )],
+  [ASTKinds.Century, new Unit(
+    'Century',
+    ASTKinds.Century,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(3155760000),
+    (quantity: Fraction) => quantity.div(3155760000)
+  )],
+  [ASTKinds.Millennium, new Unit(
+    'Millennium',
+    ASTKinds.Millennium,
+    MeasurementTypes.Time,
+    (quantity: Fraction) => quantity.mul(31557600000),
+    (quantity: Fraction) => quantity.div(31557600000)
   )]
+
 ])
 
 export class UnitConverter {
@@ -157,6 +298,24 @@ export class UnitConverter {
     this.fromQuantity = quantity
     this.fromUnit = from
     this.toUnit = to
+    this.calcTo()
+  }
+
+  public setToDefault (type: MeasurementTypes): void {
+    const fromKind = defaultFrom(type)
+    const fromUnit = UNITS.get(fromKind)
+    if (fromUnit === undefined) {
+      throw new ServerError(`Unknown unit: ${fromKind}`)
+    }
+    this.fromUnit = fromUnit
+    this.fromQuantity = new Fraction(1)
+
+    const toKind = defaultTo(type)
+    const toUnit = UNITS.get(toKind)
+    if (toUnit === undefined) {
+      throw new ServerError(`Unknown unit: ${toKind}`)
+    }
+    this.toUnit = toUnit
     this.calcTo()
   }
 
@@ -209,6 +368,48 @@ export class UnitConverter {
   }
 }
 
+function updateUnits (type: MeasurementTypes, fromKind: ASTKinds, toKind: ASTKinds): void {
+  // Find the converter tool elements
+  const selectFrom = document.getElementById('converter-from-unit') as HTMLSelectElement
+  if (selectFrom === null) {
+    throw new ServerError('Unable to find element: converter-from-unit')
+  }
+  while (selectFrom.firstChild !== null) {
+    selectFrom.removeChild(selectFrom.firstChild)
+  }
+  const selectTo = document.getElementById('converter-to-unit') as HTMLSelectElement
+  if (selectTo === null) {
+    throw new ServerError('Unable to find element: converter-to-unit')
+  }
+  while (selectTo.firstChild !== null) {
+    selectTo.removeChild(selectTo.firstChild)
+  }
+
+  // Add the supported measurements to the converter tool
+  for (const [key, unit] of UNITS) {
+    if (unit.measurementType !== type) {
+      continue
+    }
+    // Add to the "from" dropdown
+    let option = document.createElement('option')
+    option.value = key.toString()
+    option.text = unit.name
+    selectFrom.appendChild(option)
+    if (unit.kind === fromKind) {
+      option.selected = true
+    }
+
+    // Add to the "to" dropdown
+    option = document.createElement('option')
+    option.value = key.toString()
+    option.text = unit.name
+    if (unit.kind === toKind) {
+      option.selected = true
+    }
+    selectTo.appendChild(option)
+  }
+}
+
 function attach (converter: UnitConverter): void {
   // Make the converter tool visible
   const onebox = document.getElementById('converter')
@@ -243,36 +444,20 @@ function attach (converter: UnitConverter): void {
   }
 
   // Add the supported measurements to the converter tool
-  const fromKind = converter.getFromUnit().kind
-  const toKind = converter.getToUnit().kind
-  for (const [key, unit] of UNITS) {
-    if (unit.measurementType !== converter.getMeasurementType()) {
-      continue
-    }
-    // Add to the "from" dropdown
-    let option = document.createElement('option')
-    option.value = key.toString()
-    option.text = unit.name
-    selectFrom.appendChild(option)
-    if (unit.kind === fromKind) {
-      option.selected = true
-    }
-
-    // Add to the "to" dropdown
-    option = document.createElement('option')
-    option.value = key.toString()
-    option.text = unit.name
-    if (unit.kind === toKind) {
-      option.selected = true
-    }
-    selectTo.appendChild(option)
-  }
+  updateUnits(converter.getMeasurementType(), converter.getFromUnit().kind, converter.getToUnit().kind)
 
   // Set the input/output values
   inputFrom.value = converter.getFromQuantity().toString()
   inputTo.value = converter.getToQuantity().toString()
 
   // Set the event handlers
+  selectType.onchange = (e) => {
+    const type = selectType.value as MeasurementTypes
+    converter.setToDefault(type)
+    updateUnits(type, converter.getFromUnit().kind, converter.getToUnit().kind)
+    inputFrom.value = converter.getFromQuantity().toString()
+    inputTo.value = converter.getToQuantity().toString()
+  }
   selectFrom.onchange = (e) => {
     const unit = UNITS.get(parseInt(selectFrom.value))
     if (unit === undefined) {
