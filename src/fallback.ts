@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import newGithubIssueUrl from 'new-github-issue-url'
+import type { ParseResult } from './parser'
+import { version as BUILD_VERSION } from '../package.json'
+
+function feedbackTemplate (query: string, result: ParseResult): string {
+  const diagnostics = JSON.stringify({
+    version: BUILD_VERSION,
+    query,
+    parse_result: result
+  }, null, 2)
+  return '## Expected Behavior\n\n' +
+    '> Please describe what you expected to happen, and why you expected it to happen.\n\n' +
+    '## Diagnostics\n\n' +
+    '```json\n' + diagnostics + '\n```\n'
+}
+
 function buildLink (base: string, param: string, query: string): URL {
   const url = new URL(base)
   url.searchParams.set(param, query)
@@ -30,11 +46,20 @@ function addLinkTo (ul: HTMLUListElement, name: string, url: URL): void {
   ul.appendChild(li)
 }
 
-export function showFallback (q: string): void {
+export function showFallback (query: string, result: ParseResult): void {
   const fallback = document.getElementById('fallback') as HTMLInputElement
   fallback.style.display = 'block'
+
+  const feedback = document.getElementById('feedback-link') as HTMLAnchorElement
+  feedback.href = newGithubIssueUrl({
+    user: 'TonyRippy',
+    repo: 'everything-but-the-search',
+    body: feedbackTemplate(query, result),
+    labels: ['needs triage']
+  })
+
   const list = document.getElementById('fallback-list') as HTMLUListElement
-  addLinkTo(list, 'Google', buildLink('https://www.google.com/search', 'q', q))
-  addLinkTo(list, 'DuckDuckGo', buildLink('https://duckduckgo.com/', 'q', q))
-  addLinkTo(list, 'Bing', buildLink('https://www.bing.com/search', 'q', q))
+  addLinkTo(list, 'Google', buildLink('https://www.google.com/search', 'q', query))
+  addLinkTo(list, 'DuckDuckGo', buildLink('https://duckduckgo.com/', 'q', query))
+  addLinkTo(list, 'Bing', buildLink('https://www.bing.com/search', 'q', query))
 }

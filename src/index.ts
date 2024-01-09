@@ -72,8 +72,8 @@ function query (q: string | null): void {
 
   // Parse the query and invoke the proper handler if a match is found.
   try {
-    showFallback(q)
     const result = parse(q)
+    showFallback(q, result)
     if (result.ast === null) {
       handleParseFailure(result.errs)
     } else {

@@ -13,6 +13,7 @@
     "allowJs": true,
     "pretty": false,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "strictNullChecks": true
   },
   "include": [

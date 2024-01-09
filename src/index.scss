@@ -88,15 +88,11 @@ form input {
 
 #fallback {
   display: none;
-  border-top: 1px solid #444;
-  margin-top: 2em;
-  padding-top: 2em;
+  padding: 1em 2em;
   a {
-    color: #c5c5c5;
-    text-decoration: none;
+    color: lightblue;
     &:hover {
       color: yellow;
-      text-decoration: underline;
     }
   }
   li {
