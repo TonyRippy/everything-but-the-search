@@ -23,26 +23,24 @@ import { ServerError, QueryError } from './errors'
 
 function handleQuery (ast: Query): void {
   switch (ast.kind) {
-    case ASTKinds.GreetingWithoutName: {
+    case ASTKinds.GreetingWithoutName:
       hello()
       return
-    }
-    case ASTKinds.GreetingWithName: {
+    case ASTKinds.GreetingWithName:
       helloWithName(ast)
       return
-    }
-    case ASTKinds.ConversionQuery: {
+    case ASTKinds.ConvertXtoY:
       handleConversion(ast)
       return
-    }
-    case ASTKinds.UnitConverter: {
+    case ASTKinds.ConvertYtoX:
+      handleConversion(ast, true)
+      return
+    case ASTKinds.UnitConverter:
       showUnitConverter()
       return
-    }
-    default: {
+    default:
       // TODO: This is an oopsie. Provide link to file GitHub issue.
       throw new ServerError('Unknown AST kind')
-    }
   }
 }
 

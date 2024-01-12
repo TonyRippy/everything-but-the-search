@@ -32,8 +32,10 @@ HelloQuery := GreetingWithName | GreetingWithoutName
 
 UnitConverter := literal='unit\s+converter'i
 
-ConvertPrefix := 'what\s+(?:is|are)\s+'i | 'convert\s+'i
-ConversionQuery := '\s*' ConvertPrefix? quantity=Number '\s*' fromUnit=Unit '\s*' {'in\s*to' | 'in' | 'to' | 'as'} '\s+' toUnit=Unit '\s*\?'?
+ConvertXtoY := { 'what\s+(?:is|are)\s+'i | 'convert\s+'i }? quantity=Number? '\s*' fromUnit=Unit '\s*' { 'in\s*to' | 'in' | 'to' | 'as' } '\s+' toUnit=Unit '\s*\?'?
+ConvertYtoX := { 'how many\s+'i }? toUnit=Unit '\s+' { 'per' | '(?:is\s+)?in' } '\s+'  quantity=Number? '\s*' fromUnit=Unit '\s*\?'?
+
+ConversionQuery := ConvertXtoY | ConvertYtoX
 
   ////////////////////
  // NUMERIC VALUES //

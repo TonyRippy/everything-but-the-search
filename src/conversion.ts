@@ -291,14 +291,12 @@ export class UnitConverter {
   private toQuantity: Fraction
   private toUnit: Unit
 
-  constructor (quantity: Fraction, from: Unit, to: Unit) {
+  constructor (from: Unit, to: Unit) {
     if (from.measurementType !== to.measurementType) {
       throw new QueryError(`Cannot convert between ${from.name}, measured in ${from.measurementType as string}, and ${to.name}, which is measured in ${to.measurementType as string}.`)
     }
-    this.fromQuantity = quantity
     this.fromUnit = from
     this.toUnit = to
-    this.calcTo()
   }
 
   public setToDefault (type: MeasurementTypes): void {
@@ -502,21 +500,33 @@ function toUnit (ast: UnitAST): Unit {
   return unit
 }
 
-export function handleConversion (query: ConversionQuery): void {
-  const converter = new UnitConverter(
-    query.quantity.value,
-    toUnit(query.fromUnit),
-    toUnit(query.toUnit))
+export function handleConversion (query: ConversionQuery, reverse: boolean = false): void {
+  let quantity: Fraction
+  if (query.quantity !== null) {
+    quantity = query.quantity.value
+  } else {
+    quantity = new Fraction(1)
+  }
+  const x = toUnit(query.fromUnit)
+  const y = toUnit(query.toUnit)
+  let converter: UnitConverter
+  if (reverse) {
+    converter = new UnitConverter(y, x)
+    converter.setToQuantity(quantity)
+  } else {
+    converter = new UnitConverter(x, y)
+    converter.setFromQuantity(quantity)
+  }
   attach(converter)
 }
 
 export function showUnitConverter (): void {
   const converter = new UnitConverter(
-    new Fraction(1),
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
-    UNITS.get(ASTKinds.Kilobyte)!,
-    UNITS.get(ASTKinds.Byte)!
+    UNITS.get(ASTKinds.Minute)!,
+    UNITS.get(ASTKinds.Hour)!
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
   )
+  converter.setToQuantity(new Fraction(1))
   attach(converter)
 }

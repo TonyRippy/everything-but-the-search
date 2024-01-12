@@ -73,7 +73,7 @@ function parseFraction(input: string): Fraction {
   let ret = parse(`${input} bytes in bytes`)
   expect(ret.ast).not.toBeNull()
   let ast = ret.ast as ConversionQuery
-  return ast.quantity.value
+  return ast.quantity!.value
 }
 
 describe('Integer parsing', () => {
@@ -134,14 +134,25 @@ describe('Scientific number parsing', () => {
 
 describe('Conversion parsing', () => {
 
-  test('full sentence', () => {
+  test('What is # X in Y?', () => {
     let ret = parse('What is 1 GB in bytes?')
     expect(ret.ast).not.toBeNull()
     let ast = ret.ast as ConversionQuery
-    expect(ast.kind).toBe(ASTKinds.ConversionQuery)
-    expect(ast.quantity.value).toStrictEqual(new Fraction(1))
+    expect(ast.kind).toBe(ASTKinds.ConvertXtoY)
+    expect(ast.quantity).not.toBeNull();
+    expect(ast.quantity?.value).toStrictEqual(new Fraction(1))
     expect(ast.fromUnit.kind).toBe(ASTKinds.Gigabyte)
     expect(ast.toUnit.kind).toBe(ASTKinds.Byte)
+  })
+
+  test('X per Y', () => {
+    let ret = parse('milliseconds per second')
+    expect(ret.ast).not.toBeNull()
+    let ast = ret.ast as ConversionQuery
+    expect(ast.kind).toBe(ASTKinds.ConvertYtoX)
+    expect(ast.quantity).toBeNull()
+    expect(ast.fromUnit.kind).toBe(ASTKinds.Second)
+    expect(ast.toUnit.kind).toBe(ASTKinds.Millisecond)
   })
 
 })
