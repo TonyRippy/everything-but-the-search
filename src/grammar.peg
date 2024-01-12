@@ -91,7 +91,7 @@ Millisecond := literal='millis(?:econds?)?|ms'i
 Second := literal='s(?:ec(?:ond)?s?)?'i
 Minute := literal='min(?:s|utes?)?'i
 Hour := literal='h|hrs?|hours?'i
-Helek := literal='c?helek|חלק|halakim|חלקים'i
+Helek := literal='c?helek|חלק|c?halakim|חלקים'i
 
 Day := literal='d|days?'i
 Week := literal='w|weeks?'i
