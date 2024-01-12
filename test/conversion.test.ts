@@ -12,6 +12,21 @@ describe('Numeric limits', () => {
   })
 })
 
+function conversionTest(fromQuantity: Fraction, fromUnit: Unit, toQuantity: Fraction, toUnit: Unit) {
+  test(`${fromQuantity.toString()} ${fromUnit.name} <--> ${toQuantity.toString()} ${toUnit.name}`, () => {
+    expect(fromUnit).not.toBeUndefined()
+    expect(toUnit).not.toBeUndefined()
+    // Test the conversion from --> to.
+    let converter = new UnitConverter(fromUnit, toUnit)
+    converter.setFromQuantity(fromQuantity)
+    expect(converter.getToQuantity()).toStrictEqual(toQuantity)
+    // Test the same conversion in reverse. (to --> from)
+    converter = new UnitConverter(toUnit, fromUnit)
+    converter.setFromQuantity(toQuantity)
+    expect(converter.getToQuantity()).toStrictEqual(fromQuantity)
+  })
+}
+
 describe('Data storage conversions', () => {
   [
     [new Fraction(0), UNITS.get(ASTKinds.Bit), new Fraction(0), UNITS.get(ASTKinds.Byte)],
@@ -24,14 +39,7 @@ describe('Data storage conversions', () => {
     [new Fraction(1), UNITS.get(ASTKinds.Gibibyte), new Fraction(2**30, 1e9), UNITS.get(ASTKinds.Gigabyte)],
     [new Fraction(1e-3), UNITS.get(ASTKinds.Exabyte), new Fraction(1e12), UNITS.get(ASTKinds.Kilobyte)],
   ].forEach(([fromQuantity, fromUnit, toQuantity, toUnit]) => {
-    test(`${(fromQuantity as Fraction).toString()} ${(fromUnit as Unit).name} <--> ${(toQuantity as Fraction).toString()} ${(toUnit as Unit).name}`, () => {
-      expect(fromUnit).not.toBeUndefined()
-      expect(toUnit).not.toBeUndefined()
-      let converter = new UnitConverter(fromQuantity as Fraction, fromUnit as Unit, toUnit as Unit)
-      expect(converter.getToQuantity()).toStrictEqual(toQuantity)
-      converter = new UnitConverter(toQuantity as Fraction, toUnit as Unit, fromUnit as Unit)
-      expect(converter.getToQuantity()).toStrictEqual(fromQuantity)
-    })
+    conversionTest(fromQuantity as Fraction, fromUnit as Unit, toQuantity as Fraction, toUnit as Unit)
   })
 })
 
@@ -52,13 +60,6 @@ describe('Time conversions', () => {
     [new Fraction(366), UNITS.get(ASTKinds.Day), new Fraction(1), UNITS.get(ASTKinds.LeapYear)],
     [new Fraction(10), UNITS.get(ASTKinds.Decade), new Fraction(1), UNITS.get(ASTKinds.Century)],
   ].forEach(([fromQuantity, fromUnit, toQuantity, toUnit]) => {
-    test(`${(fromQuantity as Fraction).toString()} ${(fromUnit as Unit).name} <--> ${(toQuantity as Fraction).toString()} ${(toUnit as Unit).name}`, () => {
-      expect(fromUnit).not.toBeUndefined()
-      expect(toUnit).not.toBeUndefined()
-      let converter = new UnitConverter(fromQuantity as Fraction, fromUnit as Unit, toUnit as Unit)
-      expect(converter.getToQuantity()).toStrictEqual(toQuantity)
-      converter = new UnitConverter(toQuantity as Fraction, toUnit as Unit, fromUnit as Unit)
-      expect(converter.getToQuantity()).toStrictEqual(fromQuantity)
-    })
+    conversionTest(fromQuantity as Fraction, fromUnit as Unit, toQuantity as Fraction, toUnit as Unit)
   })
 })
