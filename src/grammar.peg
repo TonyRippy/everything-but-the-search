@@ -41,6 +41,9 @@ ConversionQuery := ConvertXtoY | ConvertYtoX
  // NUMERIC VALUES //
 ////////////////////
 
+One := literal='one|an?'
+       .value = Fraction { return new Fraction(1); }
+
 Integer := literal='[+-]?\d+'
            .value = Fraction { return new Fraction(this.literal); }
 
@@ -50,7 +53,7 @@ Decimal := literal='[+-]?\d*\.\d+'
 Scientific := literal='[+-]?(?:\d*\.\d+|\d+)e[+-]?\d+'
               .value = Fraction { return new Fraction(parseFloat(this.literal)); }
 
-Number := Scientific | Decimal | Integer
+Number := Scientific | Decimal | Integer | One
 
 
   //////////////////////////
