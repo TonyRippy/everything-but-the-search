@@ -60,6 +60,18 @@ Number := Scientific | Decimal | Integer | One
  // UNITS OF MEASUREMENT //
 //////////////////////////
 
+// NOTE ON MATCHING:
+// Each individual regex uses greedy matching but everything else,
+// including token matching and { sub | groups}, uses the first match
+// even if a later token would be better. Some rules to follow here:
+//   * Use a single regex where possible. It's both more efficient and
+//     uses greedy matching.
+//   * Individual unit rules should end in negative lookahead: (?!\w)
+//     This prevents things like miles ("mi") from matching the start of "minute".
+//     The negative lookahead cannot be added to a higher-level conversion rule
+//     because it also uses first match. It will decide on "mi" before checking
+//     the negative lookahead.      
+
 // SI Prefixes
 
 // Below are the prefixes used with SI unit of measurements.
@@ -96,22 +108,22 @@ Number := Scientific | Decimal | Integer | One
 
 // Data Storage Units
 
-Bit := literal='bits?'i
-Nibble := literal='nibbles?'i
-Byte := literal={'bytes?'i | 'B'i}
-Kilobyte := literal='(?:kilobytes?|KB)'i
-Megabyte := literal={'megabytes?'i | 'MB'i}
-Gigabyte := literal={'gigabytes?'i | 'GB'i}
-Terabyte := literal={'terabytes?'i | 'TB'i}
-Petabyte := literal={'petabytes?'i | 'PB'i}
-Exabyte := literal={'exabytes?'i | 'EB'i}
+Bit := literal='bits?(?!\w)'i
+Nibble := literal='nibbles?(?!\w)'i
+Byte := literal='(?:bytes?|B)(?!\w)'i
+Kilobyte := literal='(?:kilobytes?|KB)(?!\w)'i
+Megabyte := literal='(?:megabytes?|MB)(?!\w)'i
+Gigabyte := literal='(?:gigabytes?|GB)(?!\w)'i
+Terabyte := literal='(?:terabytes?|TB)(?!\w)'i
+Petabyte := literal='(?:petabytes?|PB)(?!\w)'i
+Exabyte := literal='(?:exabytes?|EB)(?!\w)'i
 
-Kibibyte := literal={'kibibytes?'i | 'KiB'i}
-Mebibyte := literal={'mebibytes?'i | 'MiB'i}
-Gibibyte := literal={'gibibytes?'i | 'GiB'i}
-Tebibyte := literal={'tebibytes?'i | 'TiB'i}
-Pebibyte := literal={'pebibytes?'i | 'PiB'i}
-Exbibyte := literal={'exbibytes?'i | 'EiB'i}
+Kibibyte := literal='(?:kibibytes?|KiB)(?!\w)'i
+Mebibyte := literal='(?:mebibytes?|MiB)(?!\w)'i
+Gibibyte := literal='(?:gibibytes?|GiB)(?!\w)'i
+Tebibyte := literal='(?:tebibytes?|TiB)(?!\w)'i
+Pebibyte := literal='(?:pebibytes?|PiB)(?!\w)'i
+Exbibyte := literal='(?:exbibytes?|EiB)(?!\w)'i
 
 DataStorageUnit := Bit | Nibble | Byte
                  | Kilobyte | Megabyte | Gigabyte | Terabyte | Petabyte | Exabyte
@@ -119,61 +131,61 @@ DataStorageUnit := Bit | Nibble | Byte
 
 // Time Units
 
-Nanosecond := literal='nanos(?:econds?)?|ns'i
-Microsecond := literal='micros(?:econds?)?|μs|us'i
-Millisecond := literal='millis(?:econds?)?|ms'i
-Second := literal='s(?:ec(?:ond)?s?)?'i
-Minute := literal='min(?:s|utes?)?'i
-Hour := literal='h|hrs?|hours?'i
-Helek := literal='c?helek|חלק|c?halakim|חלקים'i
+Nanosecond := literal='(?:nanos(?:econds?)?|ns)(?!\w)'i
+Microsecond := literal='(?:micros(?:econds?)?|μs|us)(?!\w)'i
+Millisecond := literal='(?:millis(?:econds?)?|ms)(?!\w)'i
+Second := literal='s(?:ec(?:ond)?s?)?(?!\w)'i
+Minute := literal='min(?:s|utes?)?(?!\w)'i
+Hour := literal='(?:h|hrs?|hours?)(?!\w)'i
+Helek := literal='(?:c?helek|חלק|c?halakim|חלקים)(?!\w)'i
 
-Day := literal='d|days?'i
-Week := literal='w|weeks?'i
-Fortnight := literal='fortnights?'i
-Month := literal='months?'i
-Year := literal='y|years?'i
+Day := literal='(?:d|days?)(?!\w)'i
+Week := literal='(?:w|weeks?)(?!\w)'i
+Fortnight := literal='fortnights?(?!\w)'i
+Month := literal='months?(?!\w)'i
+Year := literal='y(?:ears?)?(?!\w)'i
 LeapYear := literal='leap\s*years?'i
-Decade := literal='decades?'i
-Century := literal='centur(?:y|ies)'i
-Millennium := literal='millenni(?:a|um)'i
+Decade := literal='decades?(?!\w)'i
+Century := literal='centur(?:y|ies)(?!\w)'i
+Millennium := literal='millenni(?:a|um)(?!\w)'i
 
 TimeUnit := Nanosecond | Microsecond | Millisecond | Second | Minute | Hour | Helek
           | Day | Week | Fortnight | Month | Year | LeapYear | Decade | Century | Millennium
 
 // Length Units
 
-Inch := literal='in(?:ch(?:es)?)?'i
-Foot := literal='f(?:oo)?t|feet'i
-Yard := literal='yards?|yd'i
-Mile := literal='mi(?:les?)'i
+Inch := literal='in(?:ch(?:es)?)?(?!\w)'i
+Foot := literal='(?:f(?:oo)?t|feet)(?!\w)'i
+Yard := literal='(?:yards?|yd)(?!\w)'i
+Mile := literal='mi(?:les?)?(?!\w)'i
 
-Quettameter := literal={'quettamet(?:er|re)s?'i | 'Q[mM]'}  // 10^30
-Ronnameter := literal={'ronnamet(?:er|re)s?'i | 'R[mM]'}    // 10^27
-Yottameter := literal={'yottamet(?:er|re)s?'i | 'Y[mM]'}    // 10^24
-Zettameter := literal={'zettamet(?:er|re)s?'i | 'Z[mM]'}    // 10^21
-Exameter := literal='examet(?:er|re)s?|E[mM]'i              // 10^18
-Petameter := literal={'petamet(?:er|re)s?'i | 'P[mM]'}      // 10^15
-Terameter := literal='teramet(?:er|re)s?|Tm'i               // 10^12
-Gigameter := literal='gigamet(?:er|re)s?|Gm'i               // 10^9
-Megameter := literal={'megamet(?:er|re)s?'i | 'M[mM]'}      // 10^6
-Kilometer := literal='kilomet(?:er|re)s?|km'i               // 10^3
-Hectometer := literal='hectomet(?:er|re)s?|hm'i             // 10^2
-Decameter := literal='decamet(?:er|re)s?|dam'i              // 10^1
-Meter := literal='m(?:et(?:er|re)s?)'i                      // 1 (base unit)
-Decimeter := literal='decimet(?:er|re)s?|dm'i               // 10^-1
-Centimeter := literal='centimet(?:er|re)s?|cm'i             // 10^-2
-Millimeter := literal={'millimet(?:er|re)s?'i | 'mm'}       // 10^-3
-Micrometer := literal='micro(?:n|met(?:er|re)s?)|μm'i       // 10^-6
-Nanometer := literal='nanomet(?:er|re)s?|nm'i               // 10^-9
-Picometer := literal={'picomet(?:er|re)s?'i | 'pm'}         // 10^-12
-Femtometer := literal='femtomet(?:er|re)s?|fm'i             // 10^-15
-Attometer := literal='attomet(?:er|re)s?|am'i               // 10^-18
-Zeptometer := literal={'zeptomet(?:er|re)s?'i | 'zm'}       // 10^-21
-Yoctometer := literal={'yoctomet(?:er|re)s?'i | 'ym'}       // 10^-24
-Rontometer := literal={'rontomet(?:er|re)s?'i | 'rm'}       // 10^-27
-Quectometer := literal={'quectomet(?:er|re)s?'i | 'qm'}     // 10^-30
+Quettameter := literal={'quettamet(?:er|re)s?'i | 'Q[mM]'} '(?!\w)' // 10^30
+Ronnameter := literal={'ronnamet(?:er|re)s?'i | 'R[mM]'} '(?!\w)'  // 10^27
+Yottameter := literal={'yottamet(?:er|re)s?'i | 'Y[mM]'} '(?!\w)'  // 10^24
+Zettameter := literal={'zettamet(?:er|re)s?'i | 'Z[mM]'} '(?!\w)'  // 10^21
+Exameter := literal='(?:examet(?:er|re)s?|E[mM])(?!\w)'i           // 10^18
+Petameter := literal={'petamet(?:er|re)s?'i | 'P[mM]'} '(?!\w)'    // 10^15
+Terameter := literal='(?:teramet(?:er|re)s?|Tm)(?!\w)'i            // 10^12
+Gigameter := literal='(?:gigamet(?:er|re)s?|Gm)(?!\w)'i            // 10^9
+Megameter := literal={'megamet(?:er|re)s?'i | 'M[mM]'} '(?!\w)'    // 10^6
+Kilometer := literal='(?:kilomet(?:er|re)s?|km)(?!\w)'i            // 10^3
+Hectometer := literal='(?:hectomet(?:er|re)s?|hm)(?!\w)'i          // 10^2
+Decameter := literal='(?:decamet(?:er|re)s?|dam)(?!\w)'i           // 10^1
+Meter := literal='m(?:et(?:er|re)s?)?(?!\w)'i                      // 1 (base unit)
+Decimeter := literal='(?:decimet(?:er|re)s?|dm)(?!\w)'i            // 10^-1
+Centimeter := literal='(?:centimet(?:er|re)s?|cm)(?!\w)'i          // 10^-2
+Millimeter := literal={'millimet(?:er|re)s?'i | 'mm'} '(?!\w)'     // 10^-3
+Micrometer := literal='(?:micro(?:n|met(?:er|re)s?)|μm|um)(?!\w)'i // 10^-6
+Nanometer := literal='(?:nanomet(?:er|re)s?|nm)(?!\w)'i            // 10^-9
+Picometer := literal={'picomet(?:er|re)s?'i | 'pm'} '(?!\w)'       // 10^-12
+Femtometer := literal='(?:femtomet(?:er|re)s?|fm)(?!\w)'i          // 10^-15
+Attometer := literal='(?:attomet(?:er|re)s?|am)(?!\w)'i            // 10^-18
+Zeptometer := literal={'zeptomet(?:er|re)s?'i | 'zm'} '(?!\w)'     // 10^-21
+Yoctometer := literal={'yoctomet(?:er|re)s?'i | 'ym'} '(?!\w)'     // 10^-24
+Rontometer := literal={'rontomet(?:er|re)s?'i | 'rm'} '(?!\w)'     // 10^-27
+Quectometer := literal={'quectomet(?:er|re)s?'i | 'qm'} '(?!\w)'   // 10^-30
 
-Angstrom := literal='[aå]ngstr[oö]ms?|Å'i
+Angstrom := literal='(?:[aå]ngstr[oö]ms?|Å)(?!\w)'i
 
 LengthUnit := Inch | Foot | Yard | Mile | Meter
             | Decameter | Hectometer | Kilometer | Megameter | Gigameter | Terameter | Petameter | Exameter | Zettameter | Yottameter | Ronnameter | Quettameter
