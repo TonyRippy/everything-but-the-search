@@ -32,8 +32,8 @@ HelloQuery := GreetingWithName | GreetingWithoutName
 
 UnitConverter := literal='unit\s+converter'i
 
-ConvertXtoY := { 'what\s+(?:is|are)\s+'i | 'convert\s+'i }? quantity=Number? '\s*' fromUnit=Unit '\s*' { 'in\s*to' | 'in' | 'to' | 'as' } '\s+' toUnit=Unit '\s*\?'?
-ConvertYtoX := { 'how many\s+'i }? toUnit=Unit '\s+' { 'per' | '(?:is\s+)?in' } '\s+'  quantity=Number? '\s*' fromUnit=Unit '\s*\?'?
+ConvertXtoY := { 'what\s+(?:is|are)\s+'i | 'convert\s+'i }? quantity=Number? '\s*' fromUnit=Unit '\s+(?:in\s*to|in|to|as)\s+' toUnit=Unit '\s*\?'?
+ConvertYtoX := { 'how\s+many\s+'i }? toUnit=Unit '\s+(?:per|(?:(?:is|are)\s+)?in)\s+' quantity=Number? '\s*' fromUnit=Unit '\s*\?'?
 
 ConversionQuery := ConvertXtoY | ConvertYtoX
 
@@ -60,12 +60,46 @@ Number := Scientific | Decimal | Integer | One
  // UNITS OF MEASUREMENT //
 //////////////////////////
 
+// SI Prefixes
+
+// Below are the prefixes used with SI unit of measurements.
+// From: https://en.wikipedia.org/wiki/Metric_prefix
+// This sectoin is useful as a template for SI units.
+// Some of the prefixes are case-sensitive (e.g. 'Q' & 'q')
+
+// Quetta := literal={'quetta'i | 'Q'} // 10^30
+// Ronna := literal={'ronna'i | 'R'}   // 10^27
+// Yotta := literal={'yotta'i | 'Y'}   // 10^24
+// Zetta := literal={'zetta'i | 'Z'}   // 10^21
+// Exa := literal='exa|E'i             // 10^18
+// Peta := literal={'peta'i | 'P'}     // 10^15
+// Tera := literal='tera|T'i           // 10^12
+// Giga := literal='giga|G'i           // 10^9
+// Mega := literal={'mega'i | 'M'}     // 10^6
+// Kilo := literal='kilo|k'i           // 10^3
+// Hecto := literal='hecto|h'i         // 10^2
+// Deca := literal='deca|da'i          // 10^1
+// 1  // SI base unit
+// Deci := literal='deci|d'i           // 10^−1
+// Centi := literal='centi|c'i         // 10^−2
+// Milli := literal={'milli'i | 'm'}   // 10^−3
+// Micro := literal='micro|μ'i         // 10^−6
+// Nano := literal='nano|n'i           // 10^−9
+// Pico := literal={'pico'i | 'p'}     // 10^−12
+// Femto := literal='femto|f'i         // 10^−15
+// Atto := literal='atto|a'i           // 10^−18
+// Zepto := literal={'zepto'i | 'z'}   // 10^−21
+// Yocto := literal={'yocto'i | 'y'}   // 10^−24
+// Ronto := literal={'ronto'i | 'r'}   // 10^−27
+// Quecto := literal={'quecto'i | 'q'} // 10^−30
+
+
 // Data Storage Units
 
 Bit := literal='bits?'i
 Nibble := literal='nibbles?'i
 Byte := literal={'bytes?'i | 'B'i}
-Kilobyte := literal={'kilobytes?' | 'KB'i}
+Kilobyte := literal='(?:kilobytes?|KB)'i
 Megabyte := literal={'megabytes?'i | 'MB'i}
 Gigabyte := literal={'gigabytes?'i | 'GB'i}
 Terabyte := literal={'terabytes?'i | 'TB'i}
@@ -106,4 +140,45 @@ Millennium := literal='millenni(?:a|um)'i
 TimeUnit := Nanosecond | Microsecond | Millisecond | Second | Minute | Hour | Helek
           | Day | Week | Fortnight | Month | Year | LeapYear | Decade | Century | Millennium
 
-Unit := DataStorageUnit | TimeUnit
+// Length Units
+
+Inch := literal='in(?:ch(?:es)?)?'i
+Foot := literal='f(?:oo)?t|feet'i
+Yard := literal='yards?|yd'i
+Mile := literal='mi(?:les?)'i
+
+Quettameter := literal={'quettamet(?:er|re)s?'i | 'Q[mM]'}  // 10^30
+Ronnameter := literal={'ronnamet(?:er|re)s?'i | 'R[mM]'}    // 10^27
+Yottameter := literal={'yottamet(?:er|re)s?'i | 'Y[mM]'}    // 10^24
+Zettameter := literal={'zettamet(?:er|re)s?'i | 'Z[mM]'}    // 10^21
+Exameter := literal='examet(?:er|re)s?|E[mM]'i              // 10^18
+Petameter := literal={'petamet(?:er|re)s?'i | 'P[mM]'}      // 10^15
+Terameter := literal='teramet(?:er|re)s?|Tm'i               // 10^12
+Gigameter := literal='gigamet(?:er|re)s?|Gm'i               // 10^9
+Megameter := literal={'megamet(?:er|re)s?'i | 'M[mM]'}      // 10^6
+Kilometer := literal='kilomet(?:er|re)s?|km'i               // 10^3
+Hectometer := literal='hectomet(?:er|re)s?|hm'i             // 10^2
+Decameter := literal='decamet(?:er|re)s?|dam'i              // 10^1
+Meter := literal='m(?:et(?:er|re)s?)'i                      // 1 (base unit)
+Decimeter := literal='decimet(?:er|re)s?|dm'i               // 10^-1
+Centimeter := literal='centimet(?:er|re)s?|cm'i             // 10^-2
+Millimeter := literal={'millimet(?:er|re)s?'i | 'mm'}       // 10^-3
+Micrometer := literal='micro(?:n|met(?:er|re)s?)|μm'i       // 10^-6
+Nanometer := literal='nanomet(?:er|re)s?|nm'i               // 10^-9
+Picometer := literal={'picomet(?:er|re)s?'i | 'pm'}         // 10^-12
+Femtometer := literal='femtomet(?:er|re)s?|fm'i             // 10^-15
+Attometer := literal='attomet(?:er|re)s?|am'i               // 10^-18
+Zeptometer := literal={'zeptomet(?:er|re)s?'i | 'zm'}       // 10^-21
+Yoctometer := literal={'yoctomet(?:er|re)s?'i | 'ym'}       // 10^-24
+Rontometer := literal={'rontomet(?:er|re)s?'i | 'rm'}       // 10^-27
+Quectometer := literal={'quectomet(?:er|re)s?'i | 'qm'}     // 10^-30
+
+Angstrom := literal='[aå]ngstr[oö]ms?|Å'i
+
+LengthUnit := Inch | Foot | Yard | Mile | Meter
+            | Decameter | Hectometer | Kilometer | Megameter | Gigameter | Terameter | Petameter | Exameter | Zettameter | Yottameter | Ronnameter | Quettameter
+            | Decimeter | Centimeter | Millimeter | Micrometer | Nanometer | Picometer | Femtometer | Attometer | Zeptometer | Yoctometer | Rontometer | Quectometer
+            | Angstrom
+
+
+Unit := DataStorageUnit | LengthUnit | TimeUnit

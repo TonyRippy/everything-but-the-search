@@ -5,64 +5,63 @@ import {
   ConversionQuery,
   GreetingWithoutName,
   GreetingWithName,
+  Query,
 } from '../src/parser'
 
 import Fraction from 'fraction.js'
 
+function expectParse(input: string): Query {
+  let ret = parse(input)
+  expect(ret.errs).toStrictEqual([])
+  expect(ret.ast).not.toBeNull()
+  return ret.ast!
+}
+
+function expectParseFailure(input: string) {
+  let ret = parse(input)
+  expect(ret.errs).not.toStrictEqual([])
+  expect(ret.ast).toBeNull()
+}
+
 describe('Hello World parsing', () => {
 
   test('should work without a name', () => {
-    let ret = parse('hello')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as GreetingWithoutName
+    let ast = expectParse('hello') as GreetingWithoutName
     expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with a trailing comma', () => {
-    let ret = parse('hello,')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HelloQuery
+    let ast = expectParse('hello,') as HelloQuery
     expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with punctuation', () => {
-    let ret = parse('hello!!!')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HelloQuery
+    let ast = expectParse('hello!!!') as HelloQuery
     expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with leading whitespace', () => {
-    let ret = parse('  hello')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HelloQuery
+    let ast = expectParse('  hello') as HelloQuery
     expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should work with trailing whitespace', () => {
-    let ret = parse('hello  ')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as HelloQuery
+    let ast = expectParse('hello  ') as HelloQuery
     expect(ast.kind).toBe(ASTKinds.GreetingWithoutName)
   })
 
   test('should not work without space before name', () => {
-    let ret = parse('Helloworld!')
-    expect(ret.ast).toBeNull()
+    expectParseFailure('Helloworld!')
   })
 
   test('forgive a space if a comma', () => {
-    let ret = parse('Hello,world')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as GreetingWithName
+    let ast = expectParse('Hello,world') as GreetingWithName
     expect(ast.kind).toBe(ASTKinds.GreetingWithName)
     expect(ast.name).toBe('world')
   })
 
   test('should capture the name', () => {
-    let ret = parse('Hello, World!')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as GreetingWithName
+    let ast = expectParse('Hello, World!') as GreetingWithName
     expect(ast.kind).toBe(ASTKinds.GreetingWithName)
     expect(ast.name).toBe('World')
   })
@@ -70,9 +69,7 @@ describe('Hello World parsing', () => {
 })
 
 function parseFraction(input: string): Fraction {
-  let ret = parse(`${input} bytes in bytes`)
-  expect(ret.ast).not.toBeNull()
-  let ast = ret.ast as ConversionQuery
+  let ast = expectParse(`${input} bytes in bytes`) as ConversionQuery
   return ast.quantity!.value
 }
 
@@ -135,24 +132,42 @@ describe('Scientific number parsing', () => {
 describe('Conversion parsing', () => {
 
   test('What is # X in Y?', () => {
-    let ret = parse('What is 1 GB in bytes?')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as ConversionQuery
+    let ast = expectParse('What is 1 GB in bytes?') as ConversionQuery
     expect(ast.kind).toBe(ASTKinds.ConvertXtoY)
-    expect(ast.quantity).not.toBeNull();
+    expect(ast.quantity).not.toBeNull()
     expect(ast.quantity?.value).toStrictEqual(new Fraction(1))
     expect(ast.fromUnit.kind).toBe(ASTKinds.Gigabyte)
     expect(ast.toUnit.kind).toBe(ASTKinds.Byte)
   })
 
   test('X per Y', () => {
-    let ret = parse('milliseconds per second')
-    expect(ret.ast).not.toBeNull()
-    let ast = ret.ast as ConversionQuery
+    let ast = expectParse('milliseconds per second') as ConversionQuery
     expect(ast.kind).toBe(ASTKinds.ConvertYtoX)
     expect(ast.quantity).toBeNull()
     expect(ast.fromUnit.kind).toBe(ASTKinds.Second)
     expect(ast.toUnit.kind).toBe(ASTKinds.Millisecond)
+  })
+
+  test('Y per X', () => {
+    // If the order of precedence is wrong, the parser will
+    // choose "y" from "yd" and assume it is years.
+    let ast = expectParse('ft per yd') as ConversionQuery
+    expect(ast.kind).toBe(ASTKinds.ConvertYtoX)
+    expect(ast.quantity).toBeNull()
+    expect(ast.fromUnit.kind).toBe(ASTKinds.Yard)
+    expect(ast.toUnit.kind).toBe(ASTKinds.Foot)
+
+    ast = expectParse('d per y') as ConversionQuery
+    expect(ast.kind).toBe(ASTKinds.ConvertYtoX)
+    expect(ast.quantity).toBeNull()
+    expect(ast.fromUnit.kind).toBe(ASTKinds.Year)
+    expect(ast.toUnit.kind).toBe(ASTKinds.Day)
+
+    ast = expectParse('How many seconds are in a minute?') as ConversionQuery
+    expect(ast.kind).toBe(ASTKinds.ConvertYtoX)
+    expect(ast.quantity).not.toBeNull()
+    expect(ast.fromUnit.kind).toBe(ASTKinds.Minute)
+    expect(ast.toUnit.kind).toBe(ASTKinds.Second)
   })
 
 })
