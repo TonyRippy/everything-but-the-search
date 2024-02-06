@@ -27,7 +27,7 @@
     "mini-css-extract-plugin": "^2.7.7",
     "postcss-loader": "^8.0.0",
     "sass": "^1.70.0",
-    "sass-loader": "^14.0.0",
+    "sass-loader": "^14.1.0",
     "ts-jest": "^29.1.2",
     "ts-loader": "^9.4.2",
     "typescript": "^5.3.3",
