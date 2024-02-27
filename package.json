@@ -36,7 +36,7 @@
     "webpack-dev-server": "^5.0.2"
   },
   "dependencies": {
-    "fraction.js": "TonyRippy/fraction.js#e0e110afebeaa0dcff4c30fff736e01ee408adc1",
+    "fraction.js": "rawify/Fraction.js#81a203d396d1a35735d0ba1d6067ca8f06d1dc06",
     "new-github-issue-url": "^1.0.0",
     "tspeg": "^3.3.1"
   }
