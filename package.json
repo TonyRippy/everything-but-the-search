@@ -33,7 +33,7 @@
     "typescript": "^5.4.2",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^5.0.3"
+    "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
     "fraction.js": "rawify/Fraction.js#81a203d396d1a35735d0ba1d6067ca8f06d1dc06",
