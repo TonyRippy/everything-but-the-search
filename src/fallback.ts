@@ -16,11 +16,11 @@
 
 import newGithubIssueUrl from 'new-github-issue-url'
 import type { ParseResult } from './parser'
-import { version as BUILD_VERSION } from '../package.json'
+import PACKAGE from '../package.json'
 
 function feedbackTemplate (query: string, result: ParseResult): string {
   const diagnostics = JSON.stringify({
-    version: BUILD_VERSION,
+    version: PACKAGE.version,
     query,
     parse_result: result
   }, null, 2)
