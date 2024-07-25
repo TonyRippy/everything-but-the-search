@@ -449,14 +449,14 @@ function attach (converter: UnitConverter): void {
   inputTo.value = converter.getToQuantity().toString()
 
   // Set the event handlers
-  selectType.onchange = (e) => {
+  selectType.onchange = () => {
     const type = selectType.value as MeasurementTypes
     converter.setToDefault(type)
     updateUnits(type, converter.getFromUnit().kind, converter.getToUnit().kind)
     inputFrom.value = converter.getFromQuantity().toString()
     inputTo.value = converter.getToQuantity().toString()
   }
-  selectFrom.onchange = (e) => {
+  selectFrom.onchange = () => {
     const unit = UNITS.get(parseInt(selectFrom.value))
     if (unit === undefined) {
       throw new ServerError(`Unknown unit: ${selectFrom.value}`)
@@ -464,7 +464,7 @@ function attach (converter: UnitConverter): void {
     converter.setFromUnit(unit)
     inputTo.value = converter.getToQuantity().toString()
   }
-  inputFrom.oninput = (e) => {
+  inputFrom.oninput = () => {
     try {
       const quantity = new Fraction(inputFrom.value)
       converter.setFromQuantity(quantity)
@@ -473,7 +473,7 @@ function attach (converter: UnitConverter): void {
       inputTo.value = ''
     }
   }
-  selectTo.onchange = (e) => {
+  selectTo.onchange = () => {
     const unit = UNITS.get(parseInt(selectTo.value))
     if (unit === undefined) {
       throw new ServerError(`Unknown unit: ${selectTo.value}`)
@@ -481,7 +481,7 @@ function attach (converter: UnitConverter): void {
     converter.setToUnit(unit)
     inputFrom.value = converter.getFromQuantity().toString()
   }
-  inputTo.oninput = (e) => {
+  inputTo.oninput = () => {
     try {
       const quantity = new Fraction(inputTo.value)
       converter.setToQuantity(quantity)
@@ -500,7 +500,7 @@ function toUnit (ast: UnitAST): Unit {
   return unit
 }
 
-export function handleConversion (query: ConversionQuery, reverse: boolean = false): void {
+export function handleConversion (query: ConversionQuery, reverse = false): void {
   let quantity: Fraction
   if (query.quantity !== null) {
     quantity = query.quantity.value
