@@ -30,7 +30,7 @@ export function helloWithName (ast: GreetingWithName): void {
   const name = ast.name
   if (note !== null &&
       name !== null &&
-      name.match(/^\s*(?:ebts|everything\s+but\s+the\s+search)\s*$/i) === null) {
+      (/^\s*(?:ebts|everything\s+but\s+the\s+search)\s*$/i.exec(name)) === null) {
     note.innerHTML = `(but my name isn't &ldquo;${name.trim()}&rdquo;)`
   }
 }
