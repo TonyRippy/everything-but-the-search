@@ -522,10 +522,8 @@ export function handleConversion (query: ConversionQuery, reverse = false): void
 
 export function showUnitConverter (): void {
   const converter = new UnitConverter(
-    /* eslint-disable @typescript-eslint/no-non-null-assertion */
     UNITS.get(ASTKinds.Minute)!,
     UNITS.get(ASTKinds.Hour)!
-    /* eslint-enable @typescript-eslint/no-non-null-assertion */
   )
   converter.setToQuantity(new Fraction(1))
   attach(converter)
