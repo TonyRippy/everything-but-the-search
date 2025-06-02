@@ -14,7 +14,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@eslint/js": "^9.27.0",
+    "@eslint/js": "^9.28.0",
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.14",
     "copy-webpack-plugin": "^13.0.0",
