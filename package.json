@@ -37,6 +37,6 @@
   "dependencies": {
     "fraction.js": "^5.3.4",
     "new-github-issue-url": "^1.0.0",
-    "tspeg": "^3.3.1"
+    "tspeg": "^3.3.3"
   }
 }
