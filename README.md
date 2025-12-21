@@ -32,3 +32,10 @@ It has several benefits:
 ## Installing
 
 TODO
+
+## Development
+
+  * Use the Node version in `.nvmrc` (for example `nvm use`).
+  * Install dependencies with `npm install`.
+  * Install git hooks once per clone: `npm run hooks:install`.
+  * Run `npm test` and `npm run lint` before committing (the pre-commit hook enforces this).
